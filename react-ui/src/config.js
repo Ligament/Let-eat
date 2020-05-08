@@ -6,6 +6,8 @@
 import runtimeEnv from '@mars/heroku-js-runtime-env';
 // export const env = 'local'
 export const env = runtimeEnv();
+console.log('React', env.FIREBASE_CONFIG_BASE64);
+
 
 // Config for firebase
 export const firebase = JSON.parse(new Buffer(env.FIREBASE_CONFIG_BASE64, 'base64'));
