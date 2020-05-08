@@ -62,7 +62,7 @@ if (!isDev && cluster.isMaster) {
     res.send('{"message":"Hello from the custom server!"}');
   });
 
-  app.get("/api/createCustomToken", function (request, response) {
+  app.post("/api/createCustomToken", function (request, response) {
     if (request.body.access_token === undefined) {
       const ret = {
         error_message: "AccessToken not found",
@@ -199,12 +199,14 @@ function getFirebaseUser(body) {
               body,
             },
           });
+          client.linkRichMenuToUser(body.id,process.env.BUSINESS_RICH_MENU_ID)
         } else {
           users.child("customer").set({
             firebaseUid: {
               body,
             },
           });
+          client.linkRichMenuToUser(body.id,process.env.CUSTOMER_RICH_MENU_ID)
         }
         return user;
       }
@@ -263,8 +265,17 @@ function handleEvent(event) {
       let data = event.postback.data;
       if (data === "DATE" || data === "TIME" || data === "DATETIME") {
         data += `(${JSON.stringify(event.postback.params)})`;
+        return replyText(event.replyToken, `Got postback: ${data}`);
+      } else if (data === "bookAtable") {
+        return client.linkRichMenuToUser(event.source.userId, process.env.BOOKATABLE_RICH_MENU_ID)
+      } else if (data === "backToMain") {
+        return client.linkRichMenuToUser(event.source.userId, process.env.CUSTOMER_RICH_MENU_ID)
+      } else if (data.includes('bookATable')) {
+        return handleBookATable(data, event.replyToken)
+      } else if (data.includes('bookATableConfirm')) {
+        return handleBookATableConfirm(data, event.replyToken)
       }
-      return replyText(event.replyToken, `Got postback: ${data}`);
+      return console.log(`postback: ${JSON.stringify(data)}`);
 
     case "beacon":
       return replyText(event.replyToken, `Got beacon: ${event.beacon.hwid}`);
@@ -506,6 +517,45 @@ function handleText(message, replyToken, source) {
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       return replyText(replyToken, message.text);
   }
+}
+
+function handleBookATable(data, replyToken) {
+  return client.replyMessage(replyToken, {
+    type: "template",
+    altText: "this is a confirm template",
+    template: {
+      type: "confirm",
+      actions: [
+        {
+          type: "postback",
+          label: "ใช่",
+          text: "ใช่",
+          data: `bookATableConfirm${data.split("bookATable")[1]}`
+        },
+        {
+          type: "message",
+          label: "ไม่ใช่",
+          text: "ไม่ใช่",
+        }
+      ],
+      text: `คุณต้องการที่จะจองโต๊ะที่ ${data.split("bookATable")[1]}`
+    }
+  });
+  // return replyText(
+  //   replyToken,
+  //   `คุณได้จองโต๊ะที่ ${data.split("bookATable")}`
+  // );
+}
+
+function handleBookATableConfirm(data, replyToken) {
+  var bookATable = db.ref("restaurant").child("book_a_table");
+  bookATable.push().set({
+    table_book: data.split("bookATableConfirm")[1]
+  });
+  return replyText(
+    replyToken,
+    `คุณได้จองโต๊ะที่ ${data.split("bookATableConfirm")[1]}`
+  );
 }
 
 function handleImage(message, replyToken) {
