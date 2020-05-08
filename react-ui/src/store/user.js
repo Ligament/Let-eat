@@ -36,7 +36,7 @@ export const signupWithLine = (data) => {
   //     console.log(err);
   //   });
   fetch(
-    "https://asia-northeast1-teyisabot.cloudfunctions.net/createCustomToken",
+    "/api/createCustomToken",
     requestOptions
   )
     .then((response) => response.text())
@@ -80,7 +80,7 @@ const getLoginToken = (data) => {
   };
   return new Promise((resolve, reject) => {
     fetch(
-      "https://asia-northeast1-teyisabot.cloudfunctions.net/createCustomToken",
+      "/api/createCustomToken",
       requestOptions
     )
       .then((response) => response.json())
