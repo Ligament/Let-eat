@@ -27,5 +27,7 @@ export function fpLog(message) {
  */
 export function initScripts() {
   // Initialize global scripts here
+  console.log('React Log', process.env.FIREBASE_DATABASE_URL);
+  
   liff.init()
 }
