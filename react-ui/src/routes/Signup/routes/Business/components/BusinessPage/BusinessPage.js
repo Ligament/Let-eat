@@ -26,8 +26,7 @@ function BusinessPage() {
           displayName: pf.displayName,
           picture: pf.pictureUrl,
           email: pf.email,
-          name: `${creds.firstName} ${creds.lastName}`,
-          channel_id: "1654094818"
+          name: `${creds.firstName} ${creds.lastName}`
         })
       )
       .catch((err) => showError(err.message));

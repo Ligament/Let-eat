@@ -7,16 +7,7 @@
 export const env = 'local'
 
 // Config for firebase
-export const firebase = {
-  apiKey: "AIzaSyBfMFBO8yjTVCGrfnA1xh1ZauAd1UUgO78",
-  authDomain: "teyisabot.firebaseapp.com",
-  databaseURL: "https://teyisabot.firebaseio.com",
-  projectId: "teyisabot",
-  storageBucket: "teyisabot.appspot.com",
-  messagingSenderId: "268453339389",
-  appId: "1:268453339389:web:36fae0ef6e95ba5e1c1e94",
-  measurementId: "G-YES36XR1B1",
-}
+export const firebase = JSON.parse(new Buffer(process.env.FIREBASE_CONFIG_BASE64, 'base64'));
 
 // Config to override default reduxFirebase config in store/createStore
 // which is not environment specific.
@@ -36,8 +27,8 @@ export const reduxFirebase = {
 }
 
 export const line = {
-  main: {liffId: '1654094818-x6AzKqok'},
-  signup: {liffId: '1654094818-x6AzKqok'}
+  main: {liffId: process.env.LINE_CONFIG_MAIN},
+  signup: {liffId: process.env.LINE_CONFIG_SIGNUP}
 }
 
 export default {
