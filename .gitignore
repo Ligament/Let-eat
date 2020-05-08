@@ -1,6 +1,8 @@
 # Node build artifacts
-node_modules
+/node_modules
+**/node_modules
 npm-debug.log
+node_modules
 
 # Local development
 *.env
@@ -10,3 +12,6 @@ npm-debug.log
 # Docker
 Dockerfile
 docker-compose.yml
+
+# production
+/build

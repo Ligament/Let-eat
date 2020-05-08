@@ -1,16 +1,18 @@
-const express = require('express');
-const path = require('path');
-const cluster = require('cluster');
-const numCPUs = require('os').cpus().length;
+const express = require("express");
+const path = require("path");
+const cluster = require("cluster");
+const numCPUs = require("os").cpus().length;
 const functions = require("firebase-functions");
 const request = require("request-promise");
 const admin = require("firebase-admin");
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = process.env.NODE_ENV !== "production";
 const PORT = process.env.PORT || 5000;
 
-const serviceAccount = JSON.parse(new Buffer(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64'));
-const databaseURL = process.env.FIREBASE_DATABASE_URL
+const serviceAccount = JSON.parse(
+  new Buffer(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, "base64")
+);
+const databaseURL = process.env.FIREBASE_DATABASE_URL;
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: databaseURL,
@@ -25,23 +27,24 @@ if (!isDev && cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', (worker, code, signal) => {
-    console.error(`Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`);
+  cluster.on("exit", (worker, code, signal) => {
+    console.error(
+      `Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`
+    );
   });
-
 } else {
   const app = express();
 
   // Priority serve any static files.
-  app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+  app.use(express.static(path.resolve(__dirname, "../react-ui/build")));
 
   // Answer API requests.
-  app.get('/api', function (req, res) {
-    res.set('Content-Type', 'application/json');
+  app.get("/api", function (req, res) {
+    res.set("Content-Type", "application/json");
     res.send('{"message":"Hello from the custom server!"}');
   });
 
-  app.get('/api/createCustomToken', function (request, response) {
+  app.get("/api/createCustomToken", function (request, response) {
     if (request.body.access_token === undefined) {
       const ret = {
         error_message: "AccessToken not found",
@@ -64,27 +67,62 @@ if (!isDev && cluster.isMaster) {
       });
   });
 
+  app.post("/api/richMenu", function (req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    let richMenuId1 = "YOUR-RICH-MENU-ID-1";
+    let richMenuId2 = "YOUR-RICH-MENU-ID-2";
+
+    if (req.body.uid !== undefined) {
+      // คุณอาจทำการ auth ด้วย username และ password ที่ผู้ใช้กรอกมา
+      // และคุณอาจเก็บข้อมูล uid ลง db เพื่อผูกกับ existing account เดิมที่มีอยู่ในระบบ
+      link(req.body.uid, richMenuId1);
+    } else {
+      let event = req.body.events[0];
+      if (event.type === "postback") {
+        switch (event.postback.data) {
+          case "richmenu1":
+            link(event.source.userId, richMenuId1);
+            break;
+          case "richmenu2":
+            link(event.source.userId, richMenuId2);
+            break;
+        }
+      }
+    }
+
+    return res.status(200).send(req.method);
+  });
+
+  app.post('/webhook', (req, res) => res.sendStatus(200))
+
   // All remaining requests return the React app, so it can handle routing.
-  app.get('*', function(request, response) {
-    response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+  app.get("*", function (request, response) {
+    response.sendFile(
+      path.resolve(__dirname, "../react-ui/build", "index.html")
+    );
   });
 
   app.listen(PORT, function () {
-    console.error(`Node ${isDev ? 'dev server' : 'cluster worker '+process.pid}: listening on port ${PORT}`);
+    console.error(
+      `Node ${
+        isDev ? "dev server" : "cluster worker " + process.pid
+      }: listening on port ${PORT}`
+    );
   });
 }
 
 function verifyLineToken(body) {
   return request({
-    method: 'GET',
+    method: "GET",
     uri: `https://api.line.me/oauth2/v2.1/verify?access_token=${body.access_token}`,
-    json: true
+    json: true,
   }).then((response) => {
     if (response.client_id !== process.env.LINE_CHANNEL_ID) {
-      return Promise.reject(new Error('LINE channel ID mismatched'));
+      return Promise.reject(new Error("LINE channel ID mismatched"));
     }
     return getFirebaseUser(body);
-  })
+  });
   // if (body.channel_id !== functions.config().line.channelid) {
   //   return Promise.reject(new Error("LINE channel ID mismatched"));
   // }
