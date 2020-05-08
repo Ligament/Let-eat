@@ -53,8 +53,8 @@ if (!isDev && cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, "../react-ui/build")));
   // serve static and downloaded files
-  app.use("/static", express.static("static"));
-  app.use("/downloaded", express.static("downloaded"));
+  app.use("/static", express.static(path.resolve(__dirname, "../server/static")));
+  app.use("/downloaded", express.static(path.resolve(__dirname, "../server/downloaded")));
 
   // Answer API requests.
   app.get("/api", function (req, res) {
