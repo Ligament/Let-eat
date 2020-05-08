@@ -1,3 +1,4 @@
+import runtimeEnv from '@mars/heroku-js-runtime-env';
 import liff from "./liff"
 
 /**
@@ -25,9 +26,10 @@ export function fpLog(message) {
 /**
  * Initialize global scripts including analytics and error handling
  */
+
 export function initScripts() {
   // Initialize global scripts here
-  import runtimeEnv from '@mars/heroku-js-runtime-env';
+  
   const env = runtimeEnv()
   console.log('React Log', env.FIREBASE_DATABASE_URL);
   
