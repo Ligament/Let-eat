@@ -8,6 +8,8 @@ export const env = 'local'
 
 // Config for firebase
 export const firebase = JSON.parse(new Buffer(process.env.FIREBASE_CONFIG_BASE64, 'base64'));
+console.log(firebase);
+
 
 // Config to override default reduxFirebase config in store/createStore
 // which is not environment specific.
