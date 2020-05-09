@@ -33,132 +33,6 @@ let baseURL = process.env.BASE_URL;
 // create LINE SDK client
 const client = new line.Client(config);
 
-// Multi-process to utilize all CPU cores.
-if (!isDev && cluster.isMaster) {
-  console.error(`Node cluster master ${process.pid} is running`);
-
-  // Fork workers.
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-
-  cluster.on("exit", (worker, code, signal) => {
-    console.error(
-      `Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`
-    );
-  });
-} else {
-  const app = express();
-
-  // Priority serve any static files.
-  app.use(express.static(path.resolve(__dirname, "../react-ui/build")));
-  // serve static and downloaded files
-  app.use(
-    "/static",
-    express.static(path.resolve(__dirname, "../server/static"))
-  );
-  app.use(
-    "/downloaded",
-    express.static(path.resolve(__dirname, "../server/downloaded"))
-  );
-
-  // Answer API requests.
-  app.get("/api", function (req, res) {
-    res.set("Content-Type", "application/json");
-    res.send('{"message":"Hello from the custom server!"}');
-  });
-
-  app.post("/createCustomToken", function (request, response) {
-    // if (request.body.access_token === undefined) {
-    //   const ret = {
-    //     error_message: "AccessToken not found",
-    //   };
-    //   return response.status(400).send(ret);
-    // }
-    console.log(request.body);
-    
-    return verifyLineToken(request.body)
-      .then((customAuthToken) => {
-        const ret = {
-          firebase_token: customAuthToken,
-        };
-        return response.status(200).send(ret);
-      })
-      .catch((err) => {
-        const ret = {
-          error_message: `Authentication error: ${err}`,
-        };
-        return response.status(200).send(ret);
-      });
-  });
-
-  app.post("/api/richMenu", function (req, res) {
-    res.header("Access-Control-Allow-Origin", "*");
-
-    let richMenuId1 = "YOUR-RICH-MENU-ID-1";
-    let richMenuId2 = "YOUR-RICH-MENU-ID-2";
-
-    if (req.body.uid !== undefined) {
-      // คุณอาจทำการ auth ด้วย username และ password ที่ผู้ใช้กรอกมา
-      // และคุณอาจเก็บข้อมูล uid ลง db เพื่อผูกกับ existing account เดิมที่มีอยู่ในระบบ
-      link(req.body.uid, richMenuId1);
-    } else {
-      let event = req.body.events[0];
-      if (event.type === "postback") {
-        switch (event.postback.data) {
-          case "richmenu1":
-            link(event.source.userId, richMenuId1);
-            break;
-          case "richmenu2":
-            link(event.source.userId, richMenuId2);
-            break;
-        }
-      }
-    }
-
-    return res.status(200).send(req.method);
-  });
-
-  app.get("/callback", (req, res) =>
-    res.end(`I'm listening. Please access with POST.`)
-  );
-
-  // webhook callback
-  app.post("/callback", line.middleware(config), (req, res) => {
-    if (req.body.destination) {
-      console.log("Destination User ID: " + req.body.destination);
-    }
-
-    // req.body.events should be an array of events
-    if (!Array.isArray(req.body.events)) {
-      return res.status(500).end();
-    }
-
-    // handle events separately
-    Promise.all(req.body.events.map(handleEvent))
-      .then(() => res.end())
-      .catch((err) => {
-        console.error(err);
-        res.status(500).end();
-      });
-  });
-
-  // All remaining requests return the React app, so it can handle routing.
-  app.get("*", function (request, response) {
-    response.sendFile(
-      path.resolve(__dirname, "../react-ui/build", "index.html")
-    );
-  });
-
-  app.listen(PORT, function () {
-    console.error(
-      `Node ${
-        isDev ? "dev server" : "cluster worker " + process.pid
-      }: listening on port ${PORT}`
-    );
-  });
-}
-
 function verifyLineToken(body) {
   console.log("verifyLineToken", body);
 
@@ -388,9 +262,7 @@ function handleEvent(event) {
         bookATable.push().set({
           menu: data.split("menu")[1],
         });
-        return replyText(
-          replyToken, 'เราได้รับ order แล้ว'
-        );
+        return replyText(replyToken, "เราได้รับ order แล้ว");
       }
       return console.log(`postback: ${JSON.stringify(data)}`);
 
@@ -816,5 +688,137 @@ function handleSticker(message, replyToken) {
     type: "sticker",
     packageId: message.packageId,
     stickerId: message.stickerId,
+  });
+}
+
+// Multi-process to utilize all CPU cores.
+if (!isDev && cluster.isMaster) {
+  console.error(`Node cluster master ${process.pid} is running`);
+
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on("exit", (worker, code, signal) => {
+    console.error(
+      `Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`
+    );
+  });
+} else {
+  const bodyParser = require("body-parser");
+  const app = express();
+
+  // Priority serve any static files.
+  app.use(express.static(path.resolve(__dirname, "../react-ui/build")));
+  // serve static and downloaded files
+  app.use(
+    "/static",
+    express.static(path.resolve(__dirname, "../server/static"))
+  );
+  app.use(
+    "/downloaded",
+    express.static(path.resolve(__dirname, "../server/downloaded"))
+  );
+
+  app.use(bodyParser.urlencoded({ extended: false }));
+
+  // parse application/json
+  app.use(bodyParser.json());
+
+  // Answer API requests.
+  app.get("/api", function (req, res) {
+    res.set("Content-Type", "application/json");
+    res.send('{"message":"Hello from the custom server!"}');
+  });
+
+  app.post("/createCustomToken", (req, res) => {
+    if (request.body.access_token === undefined) {
+      const ret = {
+        error_message: "AccessToken not found",
+      };
+      return response.status(400).send(ret);
+    }
+    // console.log("rq", req.body);
+
+    return verifyLineToken(req.body)
+      .then((customAuthToken) => {
+        const ret = {
+          firebase_token: customAuthToken,
+        };
+        return res.status(200).send(ret);
+      })
+      .catch((err) => {
+        const ret = {
+          error_message: `Authentication error: ${err}`,
+        };
+        return res.status(200).send(ret);
+      });
+  });
+
+  app.post("/api/richMenu", function (req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+
+    let richMenuId1 = "YOUR-RICH-MENU-ID-1";
+    let richMenuId2 = "YOUR-RICH-MENU-ID-2";
+
+    if (req.body.uid !== undefined) {
+      // คุณอาจทำการ auth ด้วย username และ password ที่ผู้ใช้กรอกมา
+      // และคุณอาจเก็บข้อมูล uid ลง db เพื่อผูกกับ existing account เดิมที่มีอยู่ในระบบ
+      link(req.body.uid, richMenuId1);
+    } else {
+      let event = req.body.events[0];
+      if (event.type === "postback") {
+        switch (event.postback.data) {
+          case "richmenu1":
+            link(event.source.userId, richMenuId1);
+            break;
+          case "richmenu2":
+            link(event.source.userId, richMenuId2);
+            break;
+        }
+      }
+    }
+
+    return res.status(200).send(req.method);
+  });
+
+  app.get("/callback", (req, res) =>
+    res.end(`I'm listening. Please access with POST.`)
+  );
+
+  // webhook callback
+  app.post("/callback", line.middleware(config), (req, res) => {
+    if (req.body.destination) {
+      console.log("Destination User ID: " + req.body.destination);
+    }
+
+    // req.body.events should be an array of events
+    if (!Array.isArray(req.body.events)) {
+      return res.status(500).end();
+    }
+
+    // handle events separately
+    Promise.all(req.body.events.map(handleEvent))
+      .then(() => res.end())
+      .catch((err) => {
+        console.error(err);
+        res.status(500).end();
+      });
+  });
+
+  // All remaining requests return the React app, so it can handle routing.
+  app.get("*", function (request, response) {
+    response.sendFile(
+      path.resolve(__dirname, "../react-ui/build", "index.html")
+    );
+  });
+
+  app.listen(PORT, function () {
+    console.error(
+      `Node ${
+        isDev ? "dev server" : "cluster worker " + process.pid
+      }: listening on port ${PORT}`
+    );
   });
 }
