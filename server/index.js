@@ -169,7 +169,7 @@ function handleEvent(event) {
         var d = [];
         var bookATable = db.ref("restaurant")
         bookATable.child("book_a_table").once("value", (data) => {
-          d = data
+          d = data.val()
           // d.map((table, ind) => {
           //   return `โต๊ะที่ ${table}`;
           // });
