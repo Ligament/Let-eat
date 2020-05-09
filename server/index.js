@@ -68,7 +68,7 @@ if (!isDev && cluster.isMaster) {
     res.send('{"message":"Hello from the custom server!"}');
   });
 
-  app.post("/api/createCustomToken", function (request, response) {
+  app.post("/createCustomToken", function (request, response) {
     // if (request.body.access_token === undefined) {
     //   const ret = {
     //     error_message: "AccessToken not found",

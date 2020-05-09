@@ -36,7 +36,7 @@ export const signupWithLine = (data) => {
   //     console.log(err);
   //   });
   fetch(
-    "/api/createCustomToken",
+    "/createCustomToken",
     requestOptions
   )
     .then((response) => response.text())
