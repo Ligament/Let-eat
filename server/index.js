@@ -167,40 +167,51 @@ function handleEvent(event) {
         return handleBookATable(data, event.replyToken);
       } else if (data === "resvATable") {
         var d = [];
-        var bookATable = db.ref("restaurant")
+        var bookATable = db.ref("restaurant");
         bookATable.child("book_a_table").once("value", (data) => {
-          d = data.val()
+          d = data.val();
           // d.map((table, ind) => {
           //   return `โต๊ะที่ ${table}`;
           // });
           // console.log(d);
-          d.map((id, table) => {
-            return `โต๊ะที่ ${table.table_book}`;
-          });
-          console.log('not joid',d);
-          console.log('join',d.join());
+          // d.map((id, table) => {
+          //   return `โต๊ะที่ ${table.table_book}`;
+          // });
+          // console.log("not joid", d);
+          // console.log("join", d.join());
+          for (var exKey in d) {
+            replyText(event.replyToken, `โต๊ะที่ ${exKey[exKey]}`);
+            // console.log("key:"+exKey+", value:"+exjson[exKey]);
+          }
 
           replyText(event.replyToken, d.join());
         });
         return replyText(event.replyToken, d);
       } else if (data === "resvAMenu") {
         var d = [];
-        var bookATable = db.ref("restaurant")
+        var bookATable = db.ref("restaurant");
         bookATable.child("book_a_menu").once("value", (data) => {
-          d = data.val()
+          d = data.val();
           // d.map((table, ind) => {
           //   return `โต๊ะที่ ${table}`;
           // });
+          for (var exKey in d) {
+            replyText(event.replyToken, `เมนู ${exKey[exKey]}`);
+            // console.log("key:"+exKey+", value:"+exjson[exKey]);
+          }
           // console.log(d);
-          d.map((id, table) => {
-            return `เมนู ${table.menu}`;
-          });
-          console.log('not joid',d);
-          console.log('join',d.join());
+          // d.map((id, table) => {
+          //   return `เมนู ${table.menu}`;
+          // });
+          // array.forEach(element => {
 
-          replyText(event.replyToken, d.join());
+          // });
+          // console.log('not joid',d);
+          // console.log('join',d.join());
+
+          // replyText(event.replyToken, d.join());
           // console.log(data);
-          
+
           // d = data.map((table, ind) => {
           //   return `เมนู ${table}`;
           // });
