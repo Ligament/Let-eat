@@ -173,20 +173,37 @@ function handleEvent(event) {
           // d.map((table, ind) => {
           //   return `โต๊ะที่ ${table}`;
           // });
-          console.log(d);
-          
-          replyText(event.replyToken, d);
+          // console.log(d);
+          d.map((id, table) => {
+            return `โต๊ะที่ ${table.table_book}`;
+          });
+          console.log('not joid',d);
+          console.log('join',d.join());
+
+          replyText(event.replyToken, d.join());
         });
         return replyText(event.replyToken, d);
       } else if (data === "resvAMenu") {
         var d = [];
         var bookATable = db.ref("restaurant").once("book_a_menu", (data) => {
-          console.log(data);
-          
-          d = data.map((table, ind) => {
-            return `เมนู ${table}`;
+          d = data.val()
+          // d.map((table, ind) => {
+          //   return `โต๊ะที่ ${table}`;
+          // });
+          // console.log(d);
+          d.map((id, table) => {
+            return `เมนู ${table.table_book}`;
           });
-          replyText(event.replyToken, d);
+          console.log('not joid',d);
+          console.log('join',d.join());
+
+          replyText(event.replyToken, d.join());
+          // console.log(data);
+          
+          // d = data.map((table, ind) => {
+          //   return `เมนู ${table}`;
+          // });
+          // replyText(event.replyToken, d);
         });
         return replyText(event.replyToken, d);
       } else if (data === "menu") {
