@@ -69,13 +69,14 @@ if (!isDev && cluster.isMaster) {
   });
 
   app.post("/api/createCustomToken", function (request, response) {
-    if (request.body.access_token === undefined) {
-      const ret = {
-        error_message: "AccessToken not found",
-      };
-      return response.status(400).send(ret);
-    }
-
+    // if (request.body.access_token === undefined) {
+    //   const ret = {
+    //     error_message: "AccessToken not found",
+    //   };
+    //   return response.status(400).send(ret);
+    // }
+    console.log(request.body.access_token);
+    
     return verifyLineToken(request.body)
       .then((customAuthToken) => {
         const ret = {
