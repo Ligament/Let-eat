@@ -733,11 +733,11 @@ if (!isDev && cluster.isMaster) {
   });
 
   app.post("/createCustomToken", (req, res) => {
-    if (request.body.access_token === undefined) {
+    if (req.body.access_token === undefined) {
       const ret = {
         error_message: "AccessToken not found",
       };
-      return response.status(400).send(ret);
+      return res.status(400).send(ret);
     }
     // console.log("rq", req.body);
 
