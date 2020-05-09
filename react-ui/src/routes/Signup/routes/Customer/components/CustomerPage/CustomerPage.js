@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useNotifications } from "modules/notification";
 import styles from "./CustomerPage.styles";
 import liff from "utils/liff";
-import { signupWithLine } from "store/user";
+import { signupWithLine, signupWithLine2 } from "store/user";
 import CustomerForm from "../CustomerForm";
 
 const useStyles = makeStyles(styles);

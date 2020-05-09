@@ -721,10 +721,16 @@ if (!isDev && cluster.isMaster) {
     express.static(path.resolve(__dirname, "../server/downloaded"))
   );
 
-  app.use(bodyParser.urlencoded({ extended: false }));
+  // create application/json parser
+  var jsonParser = bodyParser.json();
 
-  // parse application/json
-  app.use(bodyParser.json());
+  // create application/x-www-form-urlencoded parser
+  var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+  // app.use(bodyParser.urlencoded({ extended: false }));
+
+  // // parse application/json
+  // app.use(bodyParser.json());
 
   // Answer API requests.
   app.get("/api", function (req, res) {
@@ -732,7 +738,7 @@ if (!isDev && cluster.isMaster) {
     res.send('{"message":"Hello from the custom server!"}');
   });
 
-  app.post("/createCustomToken", (req, res) => {
+  app.post("/createCustomToken", jsonParser, (req, res) => {
     if (req.body.access_token === undefined) {
       const ret = {
         error_message: "AccessToken not found",
