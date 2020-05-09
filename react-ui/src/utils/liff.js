@@ -17,7 +17,7 @@ class liff {
       }
       if (prevId === liffId) {
         liffSDK
-          .init(liffId)
+          .init({liffId: "1654094818-x6AzKqok"})
           .then(() => {
             console.log("Line", "start to use LIFF's api");
             prevId = liffId;

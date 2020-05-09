@@ -76,12 +76,12 @@ function SignupPage( {match} ) {
   //   );
   // };
   useEffect(() => {
-    liff
-      .init(line.signup)
-      .then((env) => {
-        liff.loginWithLine();
-      })
-      .catch((err) => console.log(err));
+    // liff
+    //   .init(line.signup)
+    //   .then((env) => {
+    //     liff.loginWithLine();
+    //   })
+    //   .catch((err) => console.log(err));
   }, []);
   return (
     <Switch>
