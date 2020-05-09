@@ -185,14 +185,15 @@ function handleEvent(event) {
         return replyText(event.replyToken, d);
       } else if (data === "resvAMenu") {
         var d = [];
-        var bookATable = db.ref("restaurant").once("book_a_menu", (data) => {
+        var bookATable = db.ref("restaurant")
+        bookATable.child("book_a_menu").once("value", (data) => {
           d = data.val()
           // d.map((table, ind) => {
           //   return `โต๊ะที่ ${table}`;
           // });
           // console.log(d);
           d.map((id, table) => {
-            return `เมนู ${table.table_book}`;
+            return `เมนู ${table.menu}`;
           });
           console.log('not joid',d);
           console.log('join',d.join());
