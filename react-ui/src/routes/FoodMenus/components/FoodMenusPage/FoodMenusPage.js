@@ -127,7 +127,7 @@ function MenusPage({ match }) {
             />
             {/* <Uploader></Uploader> */}
             <div className={classes.tiles}>
-              <AddFoodMenu onClick={toggleDialog} />
+              {/* <AddFoodMenu onClick={toggleDialog} /> */}
               {/* <div className={classes.menu}> */}
               {!isEmpty(menus) &&
                 menus.map((menu, ind) => {

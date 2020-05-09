@@ -4,9 +4,9 @@ const cluster = require("cluster");
 const numCPUs = require("os").cpus().length;
 const request = require("request-promise");
 const admin = require("firebase-admin");
-const line = require('@line/bot-sdk');
-const fs = require('fs');
-const cp = require('child_process');
+const line = require("@line/bot-sdk");
+const fs = require("fs");
+const cp = require("child_process");
 
 const isDev = process.env.NODE_ENV !== "production";
 const PORT = process.env.PORT || 5000;
@@ -53,8 +53,14 @@ if (!isDev && cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, "../react-ui/build")));
   // serve static and downloaded files
-  app.use("/static", express.static(path.resolve(__dirname, "../server/static")));
-  app.use("/downloaded", express.static(path.resolve(__dirname, "../server/downloaded")));
+  app.use(
+    "/static",
+    express.static(path.resolve(__dirname, "../server/static"))
+  );
+  app.use(
+    "/downloaded",
+    express.static(path.resolve(__dirname, "../server/downloaded"))
+  );
 
   // Answer API requests.
   app.get("/api", function (req, res) {
@@ -154,7 +160,7 @@ if (!isDev && cluster.isMaster) {
 
 function verifyLineToken(body) {
   console.log("verifyLineToken", body);
-  
+
   return request({
     method: "GET",
     uri: `https://api.line.me/oauth2/v2.1/verify?access_token=${body.access_token}`,
@@ -201,14 +207,14 @@ function getFirebaseUser(body) {
               body,
             },
           });
-          client.linkRichMenuToUser(body.id,process.env.BUSINESS_RICH_MENU_ID)
+          client.linkRichMenuToUser(body.id, process.env.BUSINESS_RICH_MENU_ID);
         } else {
           users.child("customer").set({
             firebaseUid: {
               body,
             },
           });
-          client.linkRichMenuToUser(body.id,process.env.CUSTOMER_RICH_MENU_ID)
+          client.linkRichMenuToUser(body.id, process.env.CUSTOMER_RICH_MENU_ID);
         }
         return user;
       }
@@ -269,13 +275,121 @@ function handleEvent(event) {
         data += `(${JSON.stringify(event.postback.params)})`;
         return replyText(event.replyToken, `Got postback: ${data}`);
       } else if (data === "bookAtable") {
-        return client.linkRichMenuToUser(event.source.userId, process.env.BOOKATABLE_RICH_MENU_ID)
+        return client.linkRichMenuToUser(
+          event.source.userId,
+          process.env.BOOKATABLE_RICH_MENU_ID
+        );
       } else if (data === "backToMain") {
-        return client.linkRichMenuToUser(event.source.userId, process.env.CUSTOMER_RICH_MENU_ID)
-      } else if (data.includes('bookATable')) {
-        return handleBookATable(data, event.replyToken)
-      } else if (data.includes('bookATableConfirm')) {
-        return handleBookATableConfirm(data, event.replyToken)
+        return client.linkRichMenuToUser(
+          event.source.userId,
+          process.env.CUSTOMER_RICH_MENU_ID
+        );
+      } else if (data.includes("bookATable")) {
+        return handleBookATable(data, event.replyToken);
+      } else if (data.includes("bookATableConfirm")) {
+        return handleBookATableConfirm(data, event.replyToken);
+      } else if (data === "resvATable") {
+        var d = [];
+        var bookATable = db.ref("restaurant").once("book_a_table", (data) => {
+          d = data.map((table, ind) => {
+            return `โต๊ะที่ ${table}`;
+          });
+        });
+        return replyText(event.replyToken, d);
+      } else if (data === "resvAMenu") {
+        var d = [];
+        var bookATable = db.ref("restaurant").once("book_a_menu", (data) => {
+          d = data.map((table, ind) => {
+            return `เมนู ${table}`;
+          });
+        });
+        return replyText(event.replyToken, d);
+      } else if (data === "menu") {
+        return replyText(event.replyToken, {
+          type: "flex",
+          altText: "Flex Message",
+          contents: {
+            type: "bubble",
+            direction: "ltr",
+            hero: {
+              type: "image",
+              url:
+                "https://www.matichon.co.th/wp-content/uploads/2019/08/17TaoTarn-ลิ้นหมูย่าง.jpg",
+              size: "full",
+              aspectRatio: "20:13",
+              aspectMode: "cover",
+              action: {
+                type: "uri",
+                label: "Action",
+                uri: "https://linecorp.com",
+              },
+            },
+            body: {
+              type: "box",
+              layout: "vertical",
+              spacing: "md",
+              action: {
+                type: "uri",
+                label: "Action",
+                uri: "https://linecorp.com",
+              },
+              contents: [
+                {
+                  type: "text",
+                  text: "พวงนมหมูย่าง",
+                  size: "xl",
+                  weight: "bold",
+                },
+                {
+                  type: "text",
+                  text: "Sauce, Onions, Pickles, Lettuce & Cheese",
+                  size: "xxs",
+                  color: "#AAAAAA",
+                  wrap: true,
+                },
+                {
+                  type: "box",
+                  layout: "vertical",
+                  contents: [
+                    {
+                      type: "spacer",
+                    },
+                    {
+                      type: "text",
+                      text: "59฿",
+                      align: "end",
+                    },
+                  ],
+                },
+              ],
+            },
+            footer: {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {
+                  type: "button",
+                  action: {
+                    type: "postback",
+                    label: "สั่งเมนูนี้",
+                    text: "พวงนมหมูย่าง",
+                    data: "menu001",
+                  },
+                  color: "#FE6B8B",
+                  style: "primary",
+                },
+              ],
+            },
+          },
+        });
+      } else if (data.includes("menu")) {
+        var bookATable = db.ref("restaurant").child("book_a_menu");
+        bookATable.push().set({
+          menu: data.split("menu")[1],
+        });
+        return replyText(
+          replyToken, 'เราได้รับ order แล้ว'
+        );
       }
       return console.log(`postback: ${JSON.stringify(data)}`);
 
@@ -532,16 +646,16 @@ function handleBookATable(data, replyToken) {
           type: "postback",
           label: "ใช่",
           text: "ใช่",
-          data: `bookATableConfirm${data.split("bookATable")[1]}`
+          data: `bookATableConfirm${data.split("bookATable")[1]}`,
         },
         {
           type: "message",
           label: "ไม่ใช่",
           text: "ไม่ใช่",
-        }
+        },
       ],
-      text: `คุณต้องการที่จะจองโต๊ะที่ ${data.split("bookATable")[1]}`
-    }
+      text: `คุณต้องการที่จะจองโต๊ะที่ ${data.split("bookATable")[1]}`,
+    },
   });
   // return replyText(
   //   replyToken,
@@ -552,7 +666,7 @@ function handleBookATable(data, replyToken) {
 function handleBookATableConfirm(data, replyToken) {
   var bookATable = db.ref("restaurant").child("book_a_table");
   bookATable.push().set({
-    table_book: data.split("bookATableConfirm")[1]
+    table_book: data.split("bookATableConfirm")[1],
   });
   return replyText(
     replyToken,

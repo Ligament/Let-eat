@@ -30,8 +30,8 @@ export const reduxFirebase = {
 }
 
 export const line = {
-  main: {liffId: env.REACT_APP_LINE_CONFIG_MAIN},
-  signup: {liffId: env.REACT_APP_LINE_CONFIG_SIGNUP}
+  main: {liffId: "1654094818-7Pn5pkwP"},
+  signup: {liffId: "1654094818-x6AzKqok"}
 }
 
 export default {
