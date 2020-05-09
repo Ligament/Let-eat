@@ -167,11 +167,12 @@ function handleEvent(event) {
         return handleBookATable(data, event.replyToken);
       } else if (data === "resvATable") {
         var d = [];
-        var bookATable = db.ref("restaurant").once("book_a_table", (data) => {
-          d = data.val()
-          d.map((table, ind) => {
-            return `โต๊ะที่ ${table}`;
-          });
+        var bookATable = db.ref("restaurant")
+        bookATable.child("book_a_table").once("value", (data) => {
+          d = data
+          // d.map((table, ind) => {
+          //   return `โต๊ะที่ ${table}`;
+          // });
           console.log(d);
           
           replyText(event.replyToken, d);
