@@ -278,6 +278,16 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   switch (message.text) {
+    case "ร้านค้า":
+      return client.linkRichMenuToUser(
+        source.userId,
+        process.env.BUSINESS_RICH_MENU_ID
+      );
+    case "ลูกค้า":
+      return client.linkRichMenuToUser(
+        source.userId,
+        process.env.CUSTOMER_RICH_MENU_ID
+      );
     case "profile":
       if (source.userId) {
         return client

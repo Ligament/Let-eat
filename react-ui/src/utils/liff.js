@@ -15,7 +15,7 @@ class liff {
         console.log("Line", "LIFF SDK Not fall!");
         reject("LIFF SDK Not fall!")
       }
-      if (prevId === liffId) {
+      if (prevId !== liffId) {
         liffSDK
           .init(liffId)
           .then(() => {
