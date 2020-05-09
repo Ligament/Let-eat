@@ -176,6 +176,8 @@ function handleEvent(event) {
       } else if (data === "resvAMenu") {
         var d = [];
         var bookATable = db.ref("restaurant").once("book_a_menu", (data) => {
+          console.log(data);
+          
           d = data.map((table, ind) => {
             return `เมนู ${table}`;
           });
