@@ -9,7 +9,7 @@ let prevId = {};
 // let liffInfo = {};
 
 class liff {
-  init( liffId = line.signup ) {
+  init( liffId = "1654094818-x6AzKqok" ) {
     return new Promise((resolve, reject) => {
       if (!liffSDK) {
         console.log("Line", "LIFF SDK Not fall!");
@@ -17,7 +17,7 @@ class liff {
       }
       if (prevId === liffId) {
         liffSDK
-          .init({liffId: "1654094818-x6AzKqok"})
+          .init(liffId)
           .then(() => {
             console.log("Line", "start to use LIFF's api");
             prevId = liffId;
