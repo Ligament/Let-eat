@@ -168,9 +168,13 @@ function handleEvent(event) {
       } else if (data === "resvATable") {
         var d = [];
         var bookATable = db.ref("restaurant").once("book_a_table", (data) => {
-          d = data.map((table, ind) => {
+          d = data.val()
+          d.map((table, ind) => {
             return `โต๊ะที่ ${table}`;
           });
+          console.log(d);
+          
+          replyText(event.replyToken, d);
         });
         return replyText(event.replyToken, d);
       } else if (data === "resvAMenu") {
@@ -181,6 +185,7 @@ function handleEvent(event) {
           d = data.map((table, ind) => {
             return `เมนู ${table}`;
           });
+          replyText(event.replyToken, d);
         });
         return replyText(event.replyToken, d);
       } else if (data === "menu") {
