@@ -35,8 +35,8 @@ function CustomerPage() {
         //   if (liff.isInClient()) {
         //     liff.closeWindow();
         //   }
-        // }) 
-      })
+        }) 
+      )
       .catch((err) => showError(err.message));
   // const singupWithLine = (creds) => {
   //   liff.getProfile().then(
