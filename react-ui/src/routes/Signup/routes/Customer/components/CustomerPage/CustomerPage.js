@@ -19,19 +19,23 @@ function CustomerPage() {
   const withLine = (creds) =>
     liff
       .getProfile()
-      .then((pf) => {
-        signupWithLine({
-          ...creds,
-          access_token: pf.access_token,
-          id: pf.userId,
-          displayName: pf.displayName,
-          picture: pf.pictureUrl,
-          email: pf.email,
-          name: `${creds.firstName} ${creds.lastName}`,
-        });
-        if (liff.isInClient()) {
-          liff.closeWindow();
-        }
+      .then((pf) => signupWithLine2(pf).then(data => {
+        console.log(data);
+        liff.closeWindow()
+        // {
+        //   signupWithLine({
+        //     ...creds,
+        //     access_token: pf.access_token,
+        //     id: pf.userId,
+        //     displayName: pf.displayName,
+        //     picture: pf.pictureUrl,
+        //     email: pf.email,
+        //     name: `${creds.firstName} ${creds.lastName}`,
+        //   });
+        //   if (liff.isInClient()) {
+        //     liff.closeWindow();
+        //   }
+        // }) 
       })
       .catch((err) => showError(err.message));
   // const singupWithLine = (creds) => {
