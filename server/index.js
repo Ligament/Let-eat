@@ -181,12 +181,12 @@ function handleEvent(event) {
           // console.log("join", d.join());
           var table_book = "";
           for (var exKey in d) {
-            table_book += d[exKey].table_book + ","
+            table_book += `โต๊ะ ${d[exKey].table_book} \n`
             // replyText(event.replyToken, `โต๊ะที่ ${exKey[exKey]}`);
             // console.log("key:"+exKey+", value:"+exjson[exKey]);
           }
 
-          replyText(event.replyToken, `เมนู ${table_book}`);
+          replyText(event.replyToken, `${table_book}`);
         });
         return replyText(event.replyToken, d);
       } else if (data === "resvAMenu") {
@@ -199,10 +199,10 @@ function handleEvent(event) {
           // });
           var menu = "";
           for (var exKey in d) {
-            menu += d[exKey].menu + ","
+            menu += `เมนู ${d[exKey].menu} \n`
             // console.log("key:"+exKey+", value:"+exjson[exKey]);
           }
-          replyText(event.replyToken, `เมนู ${menu}`);
+          replyText(event.replyToken, `เมนูที่ถูกสั่งคือ ${menu}`);
           // console.log(d);
           // d.map((id, table) => {
           //   return `เมนู ${table.menu}`;
