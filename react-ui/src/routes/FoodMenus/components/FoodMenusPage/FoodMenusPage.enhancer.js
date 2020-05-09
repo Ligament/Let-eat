@@ -1,4 +1,4 @@
-import { UserIsAuthenticated } from 'utils/router'
+import { UserIsNotAuthenticated } from 'utils/router'
 
 // redirect to /login if user is not logged in
-export default UserIsAuthenticated
+export default UserIsNotAuthenticated

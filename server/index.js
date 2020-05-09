@@ -180,7 +180,7 @@ function handleEvent(event) {
         });
         return replyText(event.replyToken, d);
       } else if (data === "menu") {
-        return replyText(event.replyToken, {
+        return client.replyMessage(event.replyToken, {
           type: "flex",
           altText: "Flex Message",
           contents: {
@@ -513,8 +513,8 @@ function handleText(message, replyToken, source) {
           );
       }
     default:
-      console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, message.text);
+      return console.log(`Echo message to ${replyToken}: ${message.text}`);
+      // return replyText(replyToken, message.text);
   }
 }
 
