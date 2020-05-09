@@ -153,6 +153,8 @@ if (!isDev && cluster.isMaster) {
 }
 
 function verifyLineToken(body) {
+  console.log("verifyLineToken", body);
+  
   return request({
     method: "GET",
     uri: `https://api.line.me/oauth2/v2.1/verify?access_token=${body.access_token}`,
