@@ -75,7 +75,7 @@ if (!isDev && cluster.isMaster) {
     //   };
     //   return response.status(400).send(ret);
     // }
-    console.log(request.body.access_token);
+    console.log(request.body);
     
     return verifyLineToken(request.body)
       .then((customAuthToken) => {
