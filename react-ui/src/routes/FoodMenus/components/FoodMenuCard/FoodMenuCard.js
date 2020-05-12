@@ -47,7 +47,7 @@ function FoodMenuCard({
 
   return (
     <Card className={classes.root}>
-      <CardActionArea className={classes.action} onClick={goToMenu}>
+      <CardActionArea className={classes.action}>
         <CardMedia
           component="img"
           className={classes.cover}
