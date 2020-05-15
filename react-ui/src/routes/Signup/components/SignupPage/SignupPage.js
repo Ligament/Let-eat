@@ -76,12 +76,7 @@ function SignupPage( {match} ) {
   //   );
   // };
   useEffect(() => {
-    liff
-      .init("1654094818-x6AzKqok")
-      .then((env) => {
-        liff.loginWithLine();
-      })
-      .catch((err) => console.log(err));
+    liff.loginWithLine();
   }, []);
   return (
     <Switch>

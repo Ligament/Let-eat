@@ -6,11 +6,10 @@
 import runtimeEnv from '@mars/heroku-js-runtime-env';
 // export const env = 'local'
 export const env = runtimeEnv();
-console.log('React Nara', process.env.REACT_APP_FIREBASE_CONFIG_BASE64);
 
 
 // Config for firebase
-export const firebase = JSON.parse(new Buffer("eyJhcGlLZXkiOiJBSXphU3lCZk1GQk84eWpUVkNHcmZuQTF4aDFaYXVBZDFVVWdPNzgiLCJhdXRoRG9tYWluIjoidGV5aXNhYm90LmZpcmViYXNlYXBwLmNvbSIsImRhdGFiYXNlVVJMIjoiaHR0cHM6Ly90ZXlpc2Fib3QuZmlyZWJhc2Vpby5jb20iLCJwcm9qZWN0SWQiOiJ0ZXlpc2Fib3QiLCJzdG9yYWdlQnVja2V0IjoidGV5aXNhYm90LmFwcHNwb3QuY29tIiwibWVzc2FnaW5nU2VuZGVySWQiOiIyNjg0NTMzMzkzODkiLCJhcHBJZCI6IjE6MjY4NDUzMzM5Mzg5OndlYjozNmZhZTBlZjZlOTViYTVlMWMxZTk0IiwibWVhc3VyZW1lbnRJZCI6IkctWUVTMzZYUjFCMSJ9", 'base64'));
+export const firebase = JSON.parse(new Buffer(process.env.REACT_APP_FIREBASE_CONFIG_BASE64, 'base64'));
 
 // Config to override default reduxFirebase config in store/createStore
 // which is not environment specific.
@@ -30,8 +29,7 @@ export const reduxFirebase = {
 }
 
 export const line = {
-  main: {liffId: "1654094818-7Pn5pkwP"},
-  signup: {liffId: "1654094818-x6AzKqok"}
+  liffId: process.env.REACT_APP_LINE_CONFIG
 }
 
 export default {
