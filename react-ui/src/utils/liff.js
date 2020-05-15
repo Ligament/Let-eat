@@ -9,7 +9,7 @@ let prevId = {};
 // let liffInfo = {};
 
 class liff {
-  init( liffId = "1654094818-x6AzKqok" ) {
+  init( liffId = line.main ) {
     return new Promise((resolve, reject) => {
       if (!liffSDK) {
         console.log("Line", "LIFF SDK Not fall!");
