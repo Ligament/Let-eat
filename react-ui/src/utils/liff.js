@@ -9,46 +9,29 @@ let prevId = {};
 // let liffInfo = {};
 
 class liff {
-  init( liffId = line.main ) {
+  init() {
     return new Promise((resolve, reject) => {
-      if (!liffSDK) {
-        console.log("Line", "LIFF SDK Not fall!");
-        reject("LIFF SDK Not fall!")
-      }
-      if (prevId !== liffId) {
-        liffSDK
-          .init(liffId)
-          .then(() => {
-            console.log("Line", "start to use LIFF's api");
-            prevId = liffId;
-            environment = {
-              browserLanguage: liffSDK.getLanguage(),
-              sdkVersion: liffSDK.getVersion(),
-              isInClient: liffSDK.isInClient(),
-              isLoggedIn: liffSDK.isLoggedIn(),
-              deviceOS: liffSDK.getOS(),
-              lineVersion: liffSDK.getLineVersion(),
-            };
-            resolve(environment)
-            // liffSDK
-            //   .getProfile()
-            //   .then((pf) => {
-            //     // addUser(pf);
-            //     console.log(pf);
-            //   })
-            //   .catch((err) => {
-            //     console.log("Line", err);
-            //   });
-          })
-          .catch((err) => {
-            console.log("Line", "Something went wrong with LIFF initialization.");
-            console.log(
-              "Line",
-              'LIFF initialization can fail if a user clicks "Cancel" on the "Grant permission" screen, or if an error occurs in the process of liff.init()'
-            );
-            reject('LIFF initialization can fail if a user clicks "Cancel" on the "Grant permission" screen, or if an error occurs in the process of liff.init()')
-          });
-      }
+      liffSDK
+        .init(liffId)
+        .then(() => {
+          console.log("Line", "start to use LIFF's api");
+          prevId = liffId;
+          environment = {
+            browserLanguage: liffSDK.getLanguage(),
+            sdkVersion: liffSDK.getVersion(),
+            isInClient: liffSDK.isInClient(),
+            isLoggedIn: liffSDK.isLoggedIn(),
+            deviceOS: liffSDK.getOS(),
+            lineVersion: liffSDK.getLineVersion(),
+          };
+          resolve(environment);
+        })
+        .catch((err) => {
+          console.log("Line", "Something went wrong with LIFF initialization.");
+          reject(
+            'LIFF initialization can fail if a user clicks "Cancel" on the "Grant permission" screen, or if an error occurs in the process of liff.init()'
+          );
+        });
     });
   }
 
