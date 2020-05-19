@@ -102,6 +102,7 @@ EditTableDialog.propTypes = {
   handleSubmit: PropTypes.func.isRequired, // from enhancer (reduxForm)
   open: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
+  tableData: PropTypes.object.isRequired
 };
 
 export default EditTableDialog;
