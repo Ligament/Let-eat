@@ -8,6 +8,7 @@ import FoodMenusRoute from './FoodMenus'
 import ProjectsRoute from './Projects'
 import AccountRoute from './Account'
 import NotFoundRoute from './NotFound'
+import BookATableRoute from './BookATable'
 // import CssBaseline from "@material-ui/core/styles";
 
 export default function createRoutes(store) {
@@ -22,7 +23,8 @@ export default function createRoutes(store) {
           ProjectsRoute,
           FoodMenusRoute,
           SignupRoute,
-          LoginRoute
+          LoginRoute,
+          BookATableRoute
           /* Add More Routes Here */
         ].map((settings, index) => (
           <Route key={`Route-${index}`} {...settings} />

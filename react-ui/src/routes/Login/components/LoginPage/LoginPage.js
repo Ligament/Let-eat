@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useFirebase } from 'react-redux-firebase'
 import Paper from '@material-ui/core/Paper'
@@ -8,6 +8,7 @@ import { useNotifications } from 'modules/notification'
 import LoginForm from '../LoginForm'
 import styles from './LoginPage.styles'
 import { Button } from '@material-ui/core'
+import liff from "utils/liff";
 
 const useStyles = makeStyles(styles)
 
@@ -45,23 +46,34 @@ function LoginPage() {
   //     return Promise.reject(error)
   //   });}
 
-  return (
-    <div className={classes.root}>
-      <Paper className={classes.panel}>
-        <LoginForm onSubmit={emailLogin} onSubmitFail={onSubmitFail} />
-      </Paper>
-      <div className={classes.orLabel}>or</div>
-      <div className={classes.providers}>
-        <Button onClick={googleLogin} data-test="google-auth-button" />
-      </div>
-      <div className={classes.signup}>
-        <span className={classes.signupLabel}>Need an account?</span>
-        <Link className={classes.signupLink} to={SIGNUP_PATH}>
-          Sign Up
-        </Link>
-      </div>
-    </div>
-  )
+  useEffect(() => {
+    liff.login();
+    liff.getFirebaseToken()
+      .then(data => firebase.login({
+        token : data.firebase_token,
+        profile: { email: data.email } // required (optional if updateProfileOnLogin: false config set)
+      }))
+      .catch((err) => showError(err.message));
+  }, []);
+  // return 
+  // (
+    // <div className={classes.root}>
+    //   <Paper className={classes.panel}>
+    //     <LoginForm onSubmit={emailLogin} onSubmitFail={onSubmitFail} />
+    //   </Paper>
+    //   <div className={classes.orLabel}>or</div>
+    //   <div className={classes.providers}>
+    //     <Button onClick={googleLogin} data-test="google-auth-button" />
+    //   </div>
+    //   <div className={classes.signup}>
+    //     <span className={classes.signupLabel}>Need an account?</span>
+    //     <Link className={classes.signupLink} to={SIGNUP_PATH}>
+    //       Sign Up
+    //     </Link>
+    //   </div>
+    // </div>
+  // )
+  return (<></>)
 }
 
 export default LoginPage

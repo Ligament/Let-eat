@@ -23,7 +23,7 @@ function FormUploadField({
 }
 
 FormUploadField.propTypes = {
-  formTextField: PropTypes.object
+  formUploadField: PropTypes.object
 }
 
 export default FormUploadField

@@ -4,7 +4,7 @@ import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect'
 import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper'
 import { createBrowserHistory } from 'history'
 import LoadingSpinner from 'components/LoadingSpinner'
-import { LIST_PATH } from 'constants/paths'
+import { FOOD_MENU_PATH } from 'constants/paths'
 
 const locationHelper = locationHelperBuilder({})
 const history = createBrowserHistory()
@@ -25,8 +25,8 @@ export const UserIsAuthenticated = connectedRouterRedirect({
   // Want to redirect the user when they are done loading and authenticated
   authenticatedSelector: ({ firebase: { auth } }) =>
     !auth.isEmpty && !!auth.uid,
-  authenticatingSelector: ({ firebase: { auth, isInitializing } }) =>
-    !auth.isLoaded || isInitializing,
+  authenticatingSelector: ({ firebase: { auth, profile, isInitializing } }) =>
+    !auth.isLoaded || !profile.isLoaded || isInitializing,
   redirectAction: newLoc => dispatch => {
     // Use push, replace, and go to navigate around.
     history.push(newLoc)
@@ -51,10 +51,10 @@ export const UserIsNotAuthenticated = connectedRouterRedirect({
   allowRedirectBack: false,
   // Want to redirect the user when they are done loading and authenticated
   authenticatedSelector: ({ firebase: { auth } }) => auth.isEmpty,
-  authenticatingSelector: ({ firebase: { auth, isInitializing } }) =>
-    !auth.isLoaded || isInitializing,
+  authenticatingSelector: ({ firebase: { auth, profile, isInitializing } }) =>
+    !auth.isLoaded || !profile.isLoaded || isInitializing,
   redirectPath: (state, ownProps) =>
-    locationHelper.getRedirectQueryParam(ownProps) || LIST_PATH,
+    locationHelper.getRedirectQueryParam(ownProps) || FOOD_MENU_PATH,
   redirectAction: newLoc => dispatch => {
     // Use push, replace, and go to navigate around.
     history.push(newLoc)

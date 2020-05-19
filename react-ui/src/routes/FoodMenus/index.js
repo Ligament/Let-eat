@@ -5,6 +5,6 @@ export default {
   path,
   component: Loadable({
     loader: () =>
-      import(/* webpackChunkName: 'Projects' */ './components/FoodMenusPage')
+      import(/* webpackChunkName: 'Menu' */ './components/FoodMenusPage')
   })
 }

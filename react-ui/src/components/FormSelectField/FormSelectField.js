@@ -31,7 +31,7 @@ const FormSelectField = ({
 );
 
 FormSelectField.propTypes = {
-  formTextField: PropTypes.object,
+  formSelectField: PropTypes.object,
 };
 
 export default FormSelectField;

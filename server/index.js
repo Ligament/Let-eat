@@ -43,25 +43,26 @@ function verifyLineToken(body) {
     uri: `https://api.line.me/oauth2/v2.1/verify?access_token=${body.access_token}`,
     json: true,
   }).then((response) => {
-    if (response.client_id !== process.env.LINE_CHANNEL_ID) {
-      return Promise.reject(new Error("LINE channel ID mismatched"));
-    }
-    return getFirebaseUser(body);
+  //   if (response.client_id !== process.env.LINE_CHANNEL_ID) {
+  //     return Promise.reject(new Error("LINE channel ID mismatched"));
+  //   }
+  //   return getFirebaseUser(body);
+  // });
+  if (response.client_id !== process.env.LINE_CHANNEL_ID) {
+    return Promise.reject(new Error("LINE channel ID mismatched"));
+  }
+  return getFirebaseUser(body)
+    .then((userRecord) => {
+      return admin.auth().createCustomToken(userRecord.uid);
+    })
+    .then((token) => {
+      return token;
+    });
   });
-  // if (body.channel_id !== functions.config().line.channelid) {
-  //   return Promise.reject(new Error("LINE channel ID mismatched"));
-  // }
-  // return getFirebaseUser(body)
-  //   .then((userRecord) => {
-  //     return admin.auth().createCustomToken(userRecord.uid);
-  //   })
-  //   .then((token) => {
-  //     return token;
-  //   });
 }
 
 function getFirebaseUser(body) {
-  const firebaseUid = `line:${body.id}`;
+  const firebaseUid = `line:${body.userId}`;
 
   return admin
     .auth()
@@ -71,26 +72,29 @@ function getFirebaseUser(body) {
     })
     .catch((error) => {
       if (error.code === "auth/user-not-found") {
+        const userRole = body.position? body.position:'Customer'
         const user = admin.auth().createUser({
           uid: firebaseUid,
           displayName: body.name,
-          photoURL: body.picture,
+          photoURL: body.pictureUrl,
           email: body.email,
         });
         var users = db.ref("users");
+        users.push({
+          uid: firebaseUid,
+          displayName: body.name,
+          photoURL: body.pictureUrl,
+          email: body.email,
+          role: userRole,
+          firstName: body.firstName,
+          lastName: body.lastName,
+          access_token: body.access_token,
+          lineDisplayName: body.displayName,
+          statusMessage: body.statusMessage
+        });
         if (body.position) {
-          users.child("business").set({
-            firebaseUid: {
-              body,
-            },
-          });
           client.linkRichMenuToUser(body.id, process.env.BUSINESS_RICH_MENU_ID);
         } else {
-          users.child("customer").set({
-            firebaseUid: {
-              body,
-            },
-          });
           client.linkRichMenuToUser(body.id, process.env.CUSTOMER_RICH_MENU_ID);
         }
         return user;
@@ -1013,7 +1017,9 @@ if (!isDev && cluster.isMaster) {
     res.send('{"message":"Hello from the custom server!"}');
   });
 
-  app.post("/createCustomToken", jsonParser, (req, res) => {
+  app.post("/api/createCustomToken", jsonParser, (req, res) => {
+    console.log('/api/createCustomToken', req.body);
+    
     if (req.body.access_token === undefined) {
       const ret = {
         error_message: "AccessToken not found",
@@ -1093,6 +1099,7 @@ if (!isDev && cluster.isMaster) {
     response.sendFile(
       path.resolve(__dirname, "../react-ui/build", "index.html")
     );
+    // response.redirect("http://localhost:3000/")
   });
 
   app.listen(PORT, function () {

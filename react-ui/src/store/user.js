@@ -13,83 +13,26 @@ export const SIGNUP_FAILURE = "SIGNUP_FAILURE";
 // Actions
 // ------------------------------------
 
-export async function signupWithLine2(data) {
+export async function signupWithLine(data) {
   // Default options are marked with *
-  const response = await fetch('/createCustomToken', {
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  const response = await fetch('/api/createCustomToken', {
     method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    mode: 'no-cors', // no-cors, *cors, same-origin
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    headers: myHeaders,
+    // mode: 'no-cors', // no-cors, *cors, same-origin
+    // cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
     //credentials: 'same-origin', // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json'
+    // headers: {
+      // 'Content-Type': 'application/json'
       // 'Content-Type': 'application/x-www-form-urlencoded',
-    },
+    // },
     //redirect: 'follow', // manual, *follow, error
     //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: JSON.stringify(data) // body data type must match "Content-Type" header
   });
   return response.json(); // parses JSON response into native JavaScript objects
 }
-
-export const signupWithLine = (data) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  const requestOptions = {
-    mode: "no-cors",
-    method: "POST",
-    headers: myHeaders,
-    body: JSON.stringify(data),
-  };
-
-  console.log(requestOptions);
-  // fetch(
-  //   "https://asia-northeast1-teyisabot.cloudfunctions.net/createCustomToken",
-  //   requestOptions
-  // )
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     console.log(data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  fetch(
-    "/createCustomToken",
-    requestOptions
-  )
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
-
-  // return (dispatch, getState) => {
-  //   const actionResponse = dispatch(
-  //     createAction({
-  //       endpoint:
-  //         "https://asia-northeast1-teyisabot.cloudfunctions.net/createCustomToken",
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(data),
-  //       types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
-  //     })
-  //   );
-  //   console.log("actionResponse", actionResponse);
-  //   // if (actionResponse.error) {
-  //   //   // the last dispatched action has errored, break out of the promise chain.
-  //   //   throw new Error("Promise flow received action error", actionResponse);
-  //   // }
-
-  //   // you can EITHER return the above resolved promise (actionResponse) here...
-  //   // return actionResponse;
-
-  //   // return dispatch(
-  //   //   actionResponse
-  //   // );
-  // };
-};
 
 const getLoginToken = (data) => {
   const requestOptions = {

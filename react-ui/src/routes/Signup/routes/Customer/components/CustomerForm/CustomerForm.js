@@ -9,7 +9,6 @@ import styles from "./CustomerForm.styles";
 import SelectField from "components/FormSelectField";
 
 const useStyles = makeStyles(styles);
-const positionMap = ["Business owner", "Chef", "Cashier", "Maid", "Waiter"];
 
 function CustomerForm({ pristine, submitting, handleSubmit }) {
   const classes = useStyles();

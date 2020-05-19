@@ -7,7 +7,8 @@
   },
   "scripts": {
     "start": "node server",
-    "build": "cd react-ui/ && npm install && npm run build"
+    "build": "cd react-ui/ && npm install && npm run build",
+    "local": "cd react-ui/ && npm install && npm run build && cd .. && heroku local"
   },
   "cacheDirectories": [
     "node_modules",
@@ -32,6 +33,6 @@
     "create-react-app",
     "react"
   ],
-  "license": "MIT",
+  "license": "FUCK OF FREE LICENSE",
   "devDependencies": {}
 }

@@ -5,33 +5,37 @@ const liffSDK = window.liff;
 let isInit = false;
 let environment = {};
 let profile = {};
-let prevId = {};
 // let liffInfo = {};
 
 class liff {
   init() {
     return new Promise((resolve, reject) => {
-      liffSDK
-        .init(liffId)
-        .then(() => {
-          console.log("Line", "start to use LIFF's api");
-          prevId = liffId;
-          environment = {
-            browserLanguage: liffSDK.getLanguage(),
-            sdkVersion: liffSDK.getVersion(),
-            isInClient: liffSDK.isInClient(),
-            isLoggedIn: liffSDK.isLoggedIn(),
-            deviceOS: liffSDK.getOS(),
-            lineVersion: liffSDK.getLineVersion(),
-          };
-          resolve(environment);
-        })
-        .catch((err) => {
-          console.log("Line", "Something went wrong with LIFF initialization.");
-          reject(
-            'LIFF initialization can fail if a user clicks "Cancel" on the "Grant permission" screen, or if an error occurs in the process of liff.init()'
-          );
-        });
+      if (!isInit) {
+        liffSDK
+          .init(line)
+          .then(() => {
+            console.log("Line", "start to use LIFF's api");
+            environment = {
+              browserLanguage: liffSDK.getLanguage(),
+              sdkVersion: liffSDK.getVersion(),
+              isInClient: liffSDK.isInClient(),
+              isLoggedIn: liffSDK.isLoggedIn(),
+              deviceOS: liffSDK.getOS(),
+              lineVersion: liffSDK.getLineVersion(),
+            };
+            isInit = true
+            resolve(environment);
+          })
+          .catch((err) => {
+            console.log(
+              "Line",
+              "Something went wrong with LIFF initialization."
+            );
+            reject(
+              'LIFF initialization can fail if a user clicks "Cancel" on the "Grant permission" screen, or if an error occurs in the process of liff.init()'
+            );
+          });
+      }
     });
   }
 
@@ -76,7 +80,21 @@ class liff {
     });
   }
 
-  loginWithLine(redirectUri = null) {
+  async getFirebaseToken() {
+    const profile = await this.getProfile()
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const response = await fetch('/api/createCustomToken', {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      headers: myHeaders,
+      body: JSON.stringify(profile) // body data type must match "Content-Type" header
+    });
+    return response.json().then(data => {
+      return { ...data, ...profile }
+    })
+  }
+
+  login(redirectUri = null) {
     if (!this.isInClient() && !this.isLoggedIn()) {
       liffSDK.login({ redirectUri });
     }

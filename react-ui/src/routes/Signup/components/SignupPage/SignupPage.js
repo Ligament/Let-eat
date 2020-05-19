@@ -76,7 +76,7 @@ function SignupPage( {match} ) {
   //   );
   // };
   useEffect(() => {
-    liff.loginWithLine();
+    liff.login();
   }, []);
   return (
     <Switch>

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useFirebase } from "react-redux-firebase";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNotifications } from "modules/notification";
@@ -12,56 +13,28 @@ const useStyles = makeStyles(styles);
 function CustomerPage() {
   const classes = useStyles();
   const firebase = useFirebase();
+  const profile = useSelector(state => state.firebase.profile)
   const { showError } = useNotifications();
-
+  console.log('aaProfile',profile);
+  
   const onSubmitFail = (formErrs, dispatch, err) =>
     showError(formErrs ? "Form Invalid" : err.message || "Error");
   const withLine = (creds) =>
     liff
       .getProfile()
-      .then((pf) => signupWithLine2(pf).then(data => {
-        console.log(data);
+      .then((pf) => signupWithLine({
+        ...pf,
+        ...creds,
+        name: `${creds.firstName} ${creds.lastName}`,
+      }).then(data => {
+        firebase.login({
+          token : data.firebase_token,
+          profile: { email: pf.email } // required (optional if updateProfileOnLogin: false config set)
+        }).then(liff.closeWindow()).catch(err => showError(err.message))
         liff.closeWindow()
-        // {
-        //   signupWithLine({
-        //     ...creds,
-        //     access_token: pf.access_token,
-        //     id: pf.userId,
-        //     displayName: pf.displayName,
-        //     picture: pf.pictureUrl,
-        //     email: pf.email,
-        //     name: `${creds.firstName} ${creds.lastName}`,
-        //   });
-        //   if (liff.isInClient()) {
-        //     liff.closeWindow();
-        //   }
         }) 
       )
       .catch((err) => showError(err.message));
-  // const singupWithLine = (creds) => {
-  //   liff.getProfile().then(
-  //     (pf) =>
-  //       firebase
-  //         .auth()
-  //         .createUser(creds, {
-  //           uid: `line:${pf.id}`,
-  //           displayName: pf.name,
-  //           photo: pf.picture,
-  //           email: pf.email,
-  //         })
-  //         .then((userRecord) => {
-  //           return firebase.auth().createCustomToken(userRecord.uid);
-  //         })
-  //         .then((token) => {
-  //           console.log(token);
-  //         })
-  //         .catch((err) => showError(err.message))
-  //     // console.log(pf)
-  //   );
-  // };
-  // useEffect(() => {
-  //   liff.loginWithLine();
-  // }, []);
   return (
     <div className={classes.root}>
       {/* <Paper className={classes.panel}> */}

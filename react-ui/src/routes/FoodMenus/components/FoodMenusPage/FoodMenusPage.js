@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { isEmpty, isLoaded } from "react-redux-firebase";
+import {
+  isEmpty,
+  isLoaded,
+  useFirebase,
+  useFirebaseConnect,
+  firebaseConnect,
+} from "react-redux-firebase";
 import { Route, Switch } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
-import { useFirebase, useFirebaseConnect } from "react-redux-firebase";
 import FoodMenuRoute from "routes/FoodMenus/routes/FoodMenu";
 import { useNotifications } from "modules/notification";
 import { renderChildren } from "utils/router";
@@ -22,17 +27,25 @@ function useMenus() {
   const firebase = useFirebase();
   // Get auth from redux state
   const auth = useSelector((state) => state.firebase.auth);
-
+  const profile = useSelector((state) => state.firebase.profile);
   // Attach todos listener
-  useFirebaseConnect(() => [
-    {
-      path: "menus",
-      queryParams: ["limitToLast=30"],
-      // queryParams: ['orderByChild=createdBy', `equalTo=${auth.uid}`]
-    },
-  ]);
+  useFirebaseConnect(
+    [
+      {
+        path: "menus",
+        queryParams: ["limitToLast=50"],
+        // queryParams: ['orderByChild=createdBy', `equalTo=${auth.uid}`]
+      },
+      {
+        type: "once",
+        path: "users",
+        queryParams: ['orderByChild=uid', `equalTo=${auth.uid}`],
+      },
+    ],
+  );
 
   // Get projects from redux state
+  const user = useSelector((state) => state.firebase.ordered.users);
   const menus = useSelector((state) => state.firebase.ordered.menus);
 
   // New dialog
@@ -45,7 +58,7 @@ function useMenus() {
     if (!auth.uid) {
       return showError("You must be logged in to create a menu");
     }
-    // console.log('FoodAdd',newInstance);
+    console.log('FoodAdd',newInstance);
     // firebase.uploadFiles('foodPicture', newInstance.foodPicture, 'foodPicture');
     // console.log('inAdd', uploadedFiles);
 
@@ -98,16 +111,26 @@ function useMenus() {
       });
   }
 
-  return { auth, menus, addMenu, newDialogOpen, toggleDialog };
+  return { auth, profile, user, menus, addMenu, newDialogOpen, toggleDialog };
 }
 
 function MenusPage({ match }) {
   const classes = useStyles();
-  const { auth, menus, addMenu, newDialogOpen, toggleDialog } = useMenus();
-
+  const {
+    auth,
+    profile,
+    user,
+    menus,
+    addMenu,
+    newDialogOpen,
+    toggleDialog,
+  } = useMenus();
+  var isNotCustomer = false
   // Show spinner while projects are loading
-  if (!isLoaded(menus)) {
+  if (!isLoaded(menus) && !isLoaded(user)) {
     return <LoadingSpinner />;
+  } else if (isLoaded(user)) {
+    isNotCustomer = user[0].value.role !== 'customer'
   }
 
   return (
@@ -127,6 +150,7 @@ function MenusPage({ match }) {
             />
             {/* <Uploader></Uploader> */}
             <div className={classes.tiles}>
+              {isNotCustomer && <AddFoodMenu onClick={toggleDialog} />}
               {/* <AddFoodMenu onClick={toggleDialog} /> */}
               {/* <div className={classes.menu}> */}
               {!isEmpty(menus) &&
@@ -134,7 +158,7 @@ function MenusPage({ match }) {
                   return (
                     <FoodMenuCard
                       key={`FoodMenu-${menu.key}-${ind}`}
-                      name={menu.value.name}
+                      name={menu.value.foodName}
                       detail={menu.value.detail}
                       price={menu.value.price}
                       pictureUrl={menu.value.pictureUrl}
@@ -142,7 +166,7 @@ function MenusPage({ match }) {
                     />
                   );
                 })}
-                {/* </div> */}
+              {/* </div> */}
             </div>
           </div>
         )}
