@@ -13,7 +13,7 @@ function CoreLayout({ children }) {
 
   return (
     <div className={classes.container}>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className={classes.children}>{children}</div>
       <Notifications />
     </div>
