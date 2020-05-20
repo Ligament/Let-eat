@@ -95,10 +95,8 @@ class liff {
   }
 
   login(redirectUri = null) {
-    if (!this.isInClient()) {
-      if (!this.isLoggedIn()) {
+    if (!this.isInClient() && !this.isLoggedIn()) {
         liffSDK.login({ redirectUri });
-      }
     }
   }
 
