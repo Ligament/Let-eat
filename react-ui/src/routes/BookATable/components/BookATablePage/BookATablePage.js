@@ -259,10 +259,10 @@ function BookATablePage() {
   if (!(isLoaded(tableImages) && isLoaded(user) && isLoaded(tableSet))) {
     return <LoadingSpinner />;
   }
-  isNotCustomer = user[0].value.role !== "customer";
+  isNotCustomer = user[0].value.role !== "Customer";
 
   const addTableRolesCheck = () => {
-    return user[0].value.role !== "customer";
+    return user[0].value.role !== "Customer";
   };
 
   // Get Table Picture URL Form Firebase

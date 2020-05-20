@@ -130,7 +130,7 @@ function MenusPage({ match }) {
   if (!isLoaded(menus) && !isLoaded(user)) {
     return <LoadingSpinner />;
   } else if (isLoaded(user)) {
-    isNotCustomer = user[0].value.role !== 'customer'
+    isNotCustomer = user[0].value.role !== 'Customer'
   }
 
   return (
