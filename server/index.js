@@ -92,10 +92,10 @@ function getFirebaseUser(body) {
           lineDisplayName: body.displayName,
           statusMessage: body.statusMessage
         });
-        if (body.position) {
-          client.linkRichMenuToUser(body.id, process.env.BUSINESS_RICH_MENU_ID);
+        if (userRole === 'Customer') {
+          client.linkRichMenuToUser(body.userId, process.env.CUSTOMER_RICH_MENU_ID);
         } else {
-          client.linkRichMenuToUser(body.id, process.env.CUSTOMER_RICH_MENU_ID);
+          client.linkRichMenuToUser(body.userId, process.env.BUSINESS_RICH_MENU_ID);
         }
         return user;
       }
