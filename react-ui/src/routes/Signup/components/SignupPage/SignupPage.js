@@ -76,7 +76,9 @@ function SignupPage( {match} ) {
   //   );
   // };
   useEffect(() => {
-    liff.login();
+    liff
+      .getProfile()
+      .catch(() => liff.login());
   }, []);
   return (
     <Switch>
