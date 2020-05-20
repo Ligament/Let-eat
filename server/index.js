@@ -217,25 +217,25 @@ function handleEvent(event) {
         });
         return replyText(event.replyToken, d);
       } else if (data === "menu") {
-        var bookATable = db.ref("menus");
+        var foodMenu = db.ref("/");
         var contentFoodMenu = [];
-
-        bookATable.once("value", (data) => {
-          d = data.val();
-          for (var exKey in d) {
+        foodMenu.child("menus").once("value", (food) => {
+          food.forEach((data) => {
+            const key = data.key;
+            const food = data.val();
             contentFoodMenu.push({
               type: "bubble",
               direction: "ltr",
               hero: {
                 type: "image",
-                url: d[exKey].pictureUrl,
+                url: food.pictureUrl,
                 size: "full",
                 aspectRatio: "20:13",
                 aspectMode: "cover",
                 action: {
                   type: "uri",
                   label: "Action",
-                  uri: d[exKey].pictureUrl,
+                  uri: food.pictureUrl,
                 },
               },
               body: {
@@ -245,18 +245,18 @@ function handleEvent(event) {
                 action: {
                   type: "uri",
                   label: "Action",
-                  uri: `https://teyisabot.herokuapp.com/?food=${exKey}`,
+                  uri: `https://teyisabot.herokuapp.com/?food=${key}`,
                 },
                 contents: [
                   {
                     type: "text",
-                    text: d[exKey].foodName,
+                    text: food.foodName,
                     size: "xl",
                     weight: "bold",
                   },
                   {
                     type: "text",
-                    text: d[exKey].detail,
+                    text: food.detail,
                     size: "xxs",
                     color: "#AAAAAA",
                     wrap: true,
@@ -270,7 +270,7 @@ function handleEvent(event) {
                       },
                       {
                         type: "text",
-                        text: d[exKey].price,
+                        text: food.price,
                         align: "end",
                       },
                     ],
@@ -286,7 +286,7 @@ function handleEvent(event) {
                     action: {
                       type: "uri",
                       label: "สั่งเมนูนี้",
-                      uri: `https://teyisabot.herokuapp.com/?addmenu=${exKey}`,
+                      uri: `https://teyisabot.herokuapp.com/?addmenu=${key}`,
                     },
                     color: "#FE6B8B",
                     style: "primary",
@@ -294,7 +294,15 @@ function handleEvent(event) {
                 ],
               },
             });
-          }
+          });
+          console.log("foodMenu", {
+            type: "flex",
+            altText: "Flex Message",
+            contents: {
+              type: "carousel",
+              contents: contentFoodMenu,
+            },
+          });
           return client.replyMessage(event.replyToken, {
             type: "flex",
             altText: "Flex Message",
@@ -303,306 +311,314 @@ function handleEvent(event) {
               contents: contentFoodMenu,
             },
           });
+          // res.status(200).send({
+          //   type: "flex",
+          //   altText: "Flex Message",
+          //   contents: {
+          //     type: "carousel",
+          //     contents: contentFoodMenu,
+          //   },
+          // })
         });
-        return client.replyMessage(event.replyToken, {
-          type: "flex",
-          altText: "Flex Message",
-          contents: {
-            type: "carousel",
-            contents: [
-              {
-                type: "bubble",
-                direction: "ltr",
-                hero: {
-                  type: "image",
-                  url:
-                    "https://www.matichon.co.th/wp-content/uploads/2019/08/17TaoTarn-ลิ้นหมูย่าง.jpg",
-                  size: "full",
-                  aspectRatio: "20:13",
-                  aspectMode: "cover",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                },
-                body: {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "md",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                  contents: [
-                    {
-                      type: "text",
-                      text: "พวงนมหมูย่าง",
-                      size: "xl",
-                      weight: "bold",
-                    },
-                    {
-                      type: "text",
-                      text: "Sauce, Onions, Pickles, Lettuce & Cheese",
-                      size: "xxs",
-                      color: "#AAAAAA",
-                      wrap: true,
-                    },
-                    {
-                      type: "box",
-                      layout: "vertical",
-                      contents: [
-                        {
-                          type: "spacer",
-                        },
-                        {
-                          type: "text",
-                          text: "59฿",
-                          align: "end",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                footer: {
-                  type: "box",
-                  layout: "vertical",
-                  contents: [
-                    {
-                      type: "button",
-                      action: {
-                        type: "postback",
-                        label: "สั่งเมนูนี้",
-                        text: "พวงนมหมูย่าง",
-                        data: "menu001",
-                      },
-                      color: "#FE6B8B",
-                      style: "primary",
-                    },
-                  ],
-                },
-              },
-              {
-                type: "bubble",
-                direction: "ltr",
-                hero: {
-                  type: "image",
-                  url:
-                    "https://ginngai.com/wp-content/uploads/2019/10/ปลาทับทิม-4513-1024x538.jpg",
-                  size: "full",
-                  aspectRatio: "20:13",
-                  aspectMode: "cover",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                },
-                body: {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "md",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                  contents: [
-                    {
-                      type: "text",
-                      text: "ปลาทับทิมผัดขมิ้นขาว",
-                      size: "xl",
-                      weight: "bold",
-                    },
-                    {
-                      type: "text",
-                      text: "Sauce, Onions, Pickles, Lettuce & Cheese",
-                      size: "xxs",
-                      color: "#AAAAAA",
-                      wrap: true,
-                    },
-                    {
-                      type: "box",
-                      layout: "vertical",
-                      contents: [
-                        {
-                          type: "spacer",
-                        },
-                        {
-                          type: "text",
-                          text: "200฿",
-                          align: "end",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                footer: {
-                  type: "box",
-                  layout: "vertical",
-                  contents: [
-                    {
-                      type: "button",
-                      action: {
-                        type: "postback",
-                        label: "สั่งเมนูนี้",
-                        text: "ปลาทับทิมผัดขมิ้นขาว",
-                        data: "menu002",
-                      },
-                      color: "#FE6B8B",
-                      style: "primary",
-                    },
-                  ],
-                },
-              },
-              {
-                type: "bubble",
-                direction: "ltr",
-                hero: {
-                  type: "image",
-                  url: "https://i.ytimg.com/vi/Y7_Ut9q1ohw/maxresdefault.jpg",
-                  size: "full",
-                  aspectRatio: "20:13",
-                  aspectMode: "cover",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                },
-                body: {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "md",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                  contents: [
-                    {
-                      type: "text",
-                      text: "ไข่พะโล้",
-                      size: "xl",
-                      weight: "bold",
-                    },
-                    {
-                      type: "text",
-                      text: "Sauce, Onions, Pickles, Lettuce & Cheese",
-                      size: "xxs",
-                      color: "#AAAAAA",
-                      wrap: true,
-                    },
-                    {
-                      type: "box",
-                      layout: "vertical",
-                      contents: [
-                        {
-                          type: "spacer",
-                        },
-                        {
-                          type: "text",
-                          text: "69฿",
-                          align: "end",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                footer: {
-                  type: "box",
-                  layout: "vertical",
-                  contents: [
-                    {
-                      type: "button",
-                      action: {
-                        type: "postback",
-                        label: "สั่งเมนูนี้",
-                        text: "ไข่พะโล้",
-                        data: "menu003",
-                      },
-                      color: "#FE6B8B",
-                      style: "primary",
-                    },
-                  ],
-                },
-              },
-              {
-                type: "bubble",
-                direction: "ltr",
-                hero: {
-                  type: "image",
-                  url: "https://img.kapook.com/u/2017/surauch/cooking/z2.jpg",
-                  size: "full",
-                  aspectRatio: "20:13",
-                  aspectMode: "cover",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                },
-                body: {
-                  type: "box",
-                  layout: "vertical",
-                  spacing: "md",
-                  action: {
-                    type: "uri",
-                    label: "Action",
-                    uri: "https://linecorp.com",
-                  },
-                  contents: [
-                    {
-                      type: "text",
-                      text: "ไก่ทอดหาดใหญ่",
-                      size: "xl",
-                      weight: "bold",
-                    },
-                    {
-                      type: "text",
-                      text: "Sauce, Onions, Pickles, Lettuce & Cheese",
-                      size: "xxs",
-                      color: "#AAAAAA",
-                      wrap: true,
-                    },
-                    {
-                      type: "box",
-                      layout: "vertical",
-                      contents: [
-                        {
-                          type: "spacer",
-                        },
-                        {
-                          type: "text",
-                          text: "79฿",
-                          align: "end",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                footer: {
-                  type: "box",
-                  layout: "vertical",
-                  contents: [
-                    {
-                      type: "button",
-                      action: {
-                        type: "postback",
-                        label: "สั่งเมนูนี้",
-                        text: "ไก่ทอดหาดใหญ่",
-                        data: "menu004",
-                      },
-                      color: "#FE6B8B",
-                      style: "primary",
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        });
+        // return client.replyMessage(event.replyToken, {
+        //   type: "flex",
+        //   altText: "Flex Message",
+        //   contents: {
+        //     type: "carousel",
+        //     contents: [
+        //       {
+        //         type: "bubble",
+        //         direction: "ltr",
+        //         hero: {
+        //           type: "image",
+        //           url:
+        //             "https://www.matichon.co.th/wp-content/uploads/2019/08/17TaoTarn-ลิ้นหมูย่าง.jpg",
+        //           size: "full",
+        //           aspectRatio: "20:13",
+        //           aspectMode: "cover",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //         },
+        //         body: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           spacing: "md",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //           contents: [
+        //             {
+        //               type: "text",
+        //               text: "พวงนมหมูย่าง",
+        //               size: "xl",
+        //               weight: "bold",
+        //             },
+        //             {
+        //               type: "text",
+        //               text: "Sauce, Onions, Pickles, Lettuce & Cheese",
+        //               size: "xxs",
+        //               color: "#AAAAAA",
+        //               wrap: true,
+        //             },
+        //             {
+        //               type: "box",
+        //               layout: "vertical",
+        //               contents: [
+        //                 {
+        //                   type: "spacer",
+        //                 },
+        //                 {
+        //                   type: "text",
+        //                   text: "59฿",
+        //                   align: "end",
+        //                 },
+        //               ],
+        //             },
+        //           ],
+        //         },
+        //         footer: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           contents: [
+        //             {
+        //               type: "button",
+        //               action: {
+        //                 type: "postback",
+        //                 label: "สั่งเมนูนี้",
+        //                 text: "พวงนมหมูย่าง",
+        //                 data: "menu001",
+        //               },
+        //               color: "#FE6B8B",
+        //               style: "primary",
+        //             },
+        //           ],
+        //         },
+        //       },
+        //       {
+        //         type: "bubble",
+        //         direction: "ltr",
+        //         hero: {
+        //           type: "image",
+        //           url:
+        //             "https://ginngai.com/wp-content/uploads/2019/10/ปลาทับทิม-4513-1024x538.jpg",
+        //           size: "full",
+        //           aspectRatio: "20:13",
+        //           aspectMode: "cover",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //         },
+        //         body: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           spacing: "md",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //           contents: [
+        //             {
+        //               type: "text",
+        //               text: "ปลาทับทิมผัดขมิ้นขาว",
+        //               size: "xl",
+        //               weight: "bold",
+        //             },
+        //             {
+        //               type: "text",
+        //               text: "Sauce, Onions, Pickles, Lettuce & Cheese",
+        //               size: "xxs",
+        //               color: "#AAAAAA",
+        //               wrap: true,
+        //             },
+        //             {
+        //               type: "box",
+        //               layout: "vertical",
+        //               contents: [
+        //                 {
+        //                   type: "spacer",
+        //                 },
+        //                 {
+        //                   type: "text",
+        //                   text: "200฿",
+        //                   align: "end",
+        //                 },
+        //               ],
+        //             },
+        //           ],
+        //         },
+        //         footer: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           contents: [
+        //             {
+        //               type: "button",
+        //               action: {
+        //                 type: "postback",
+        //                 label: "สั่งเมนูนี้",
+        //                 text: "ปลาทับทิมผัดขมิ้นขาว",
+        //                 data: "menu002",
+        //               },
+        //               color: "#FE6B8B",
+        //               style: "primary",
+        //             },
+        //           ],
+        //         },
+        //       },
+        //       {
+        //         type: "bubble",
+        //         direction: "ltr",
+        //         hero: {
+        //           type: "image",
+        //           url: "https://i.ytimg.com/vi/Y7_Ut9q1ohw/maxresdefault.jpg",
+        //           size: "full",
+        //           aspectRatio: "20:13",
+        //           aspectMode: "cover",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //         },
+        //         body: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           spacing: "md",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //           contents: [
+        //             {
+        //               type: "text",
+        //               text: "ไข่พะโล้",
+        //               size: "xl",
+        //               weight: "bold",
+        //             },
+        //             {
+        //               type: "text",
+        //               text: "Sauce, Onions, Pickles, Lettuce & Cheese",
+        //               size: "xxs",
+        //               color: "#AAAAAA",
+        //               wrap: true,
+        //             },
+        //             {
+        //               type: "box",
+        //               layout: "vertical",
+        //               contents: [
+        //                 {
+        //                   type: "spacer",
+        //                 },
+        //                 {
+        //                   type: "text",
+        //                   text: "69฿",
+        //                   align: "end",
+        //                 },
+        //               ],
+        //             },
+        //           ],
+        //         },
+        //         footer: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           contents: [
+        //             {
+        //               type: "button",
+        //               action: {
+        //                 type: "postback",
+        //                 label: "สั่งเมนูนี้",
+        //                 text: "ไข่พะโล้",
+        //                 data: "menu003",
+        //               },
+        //               color: "#FE6B8B",
+        //               style: "primary",
+        //             },
+        //           ],
+        //         },
+        //       },
+        //       {
+        //         type: "bubble",
+        //         direction: "ltr",
+        //         hero: {
+        //           type: "image",
+        //           url: "https://img.kapook.com/u/2017/surauch/cooking/z2.jpg",
+        //           size: "full",
+        //           aspectRatio: "20:13",
+        //           aspectMode: "cover",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //         },
+        //         body: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           spacing: "md",
+        //           action: {
+        //             type: "uri",
+        //             label: "Action",
+        //             uri: "https://linecorp.com",
+        //           },
+        //           contents: [
+        //             {
+        //               type: "text",
+        //               text: "ไก่ทอดหาดใหญ่",
+        //               size: "xl",
+        //               weight: "bold",
+        //             },
+        //             {
+        //               type: "text",
+        //               text: "Sauce, Onions, Pickles, Lettuce & Cheese",
+        //               size: "xxs",
+        //               color: "#AAAAAA",
+        //               wrap: true,
+        //             },
+        //             {
+        //               type: "box",
+        //               layout: "vertical",
+        //               contents: [
+        //                 {
+        //                   type: "spacer",
+        //                 },
+        //                 {
+        //                   type: "text",
+        //                   text: "79฿",
+        //                   align: "end",
+        //                 },
+        //               ],
+        //             },
+        //           ],
+        //         },
+        //         footer: {
+        //           type: "box",
+        //           layout: "vertical",
+        //           contents: [
+        //             {
+        //               type: "button",
+        //               action: {
+        //                 type: "postback",
+        //                 label: "สั่งเมนูนี้",
+        //                 text: "ไก่ทอดหาดใหญ่",
+        //                 data: "menu004",
+        //               },
+        //               color: "#FE6B8B",
+        //               style: "primary",
+        //             },
+        //           ],
+        //         },
+        //       },
+        //     ],
+        //   },
+        // });
       } else if (data.includes("menu")) {
         var bookATable = db.ref("restaurant").child("book_a_menu");
         bookATable.push().set({
@@ -1125,8 +1141,8 @@ if (!isDev && cluster.isMaster) {
 
     var foodMenu = db.ref("/");
     var contentFoodMenu = [];
-    foodMenu.child("menus").once("value", food => {
-      food.forEach(data => {
+    foodMenu.child("menus").once("value", (food) => {
+      food.forEach((data) => {
         const key = data.key;
         const food = data.val();
         contentFoodMenu.push({
@@ -1200,7 +1216,7 @@ if (!isDev && cluster.isMaster) {
             ],
           },
         });
-      })
+      });
       console.log("foodMenu", {
         type: "flex",
         altText: "Flex Message",
@@ -1216,13 +1232,13 @@ if (!isDev && cluster.isMaster) {
           type: "carousel",
           contents: contentFoodMenu,
         },
-      })
-    })
+      });
+    });
 
     // bookATable.once("value", (data) => {
     //   d = data.val();
     //   for (var exKey in d) {
-        
+
     //   }
     //   console.log("foodMenu", {
     //     type: "flex",
@@ -1243,7 +1259,7 @@ if (!isDev && cluster.isMaster) {
     //   });
     // });
 
-    return res.status(200).send(req.method);
+    // return res.status(200).send(req.method);
   });
 
   app.get("/callback", (req, res) =>
