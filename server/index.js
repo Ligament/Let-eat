@@ -301,6 +301,15 @@ function handleEvent(event) {
               },
             });
           });
+          console.log('Flex Message',{
+            type: "flex",
+            altText: "Flex Message",
+            contents: {
+              type: "carousel",
+              contents: contentFoodMenu,
+            },
+          });
+          
           return client.pushMessage(event.source.userId, {
             type: "flex",
             altText: "Flex Message",
