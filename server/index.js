@@ -219,7 +219,7 @@ function handleEvent(event) {
       } else if (data === "menu") {
         var foodMenu = db.ref("/");
         var contentFoodMenu = [];
-        foodMenu.child("menus").once("value", (food) => {
+        foodMenu.child("menus").once("value").then(data => {
           food.forEach((data) => {
             const key = data.key;
             const food = data.val();
@@ -283,10 +283,16 @@ function handleEvent(event) {
                 contents: [
                   {
                     type: "button",
+                    // action: {
+                    //   type: "uri",
+                    //   label: "สั่งเมนูนี้",
+                    //   uri: `https://teyisabot.herokuapp.com/?addmenu=${key}`,
+                    // },
                     action: {
-                      type: "uri",
+                      type: "postback",
                       label: "สั่งเมนูนี้",
-                      uri: `https://teyisabot.herokuapp.com/?addmenu=${key}`,
+                      text: food.foodName,
+                      data: food.foodName,
                     },
                     color: "#FE6B8B",
                     style: "primary",
@@ -295,7 +301,15 @@ function handleEvent(event) {
               },
             });
           });
-          // console.log("foodMenu", {
+          return client.pushMessage(event.source.userId, {
+            type: "flex",
+            altText: "Flex Message",
+            contents: {
+              type: "carousel",
+              contents: contentFoodMenu,
+            },
+          })
+          // return client.replyMessage(event.replyToken, {
           //   type: "flex",
           //   altText: "Flex Message",
           //   contents: {
@@ -303,22 +317,6 @@ function handleEvent(event) {
           //     contents: contentFoodMenu,
           //   },
           // });
-          return client.replyMessage(event.replyToken, {
-            type: "flex",
-            altText: "Flex Message",
-            contents: {
-              type: "carousel",
-              contents: contentFoodMenu,
-            },
-          });
-          // res.status(200).send({
-          //   type: "flex",
-          //   altText: "Flex Message",
-          //   contents: {
-          //     type: "carousel",
-          //     contents: contentFoodMenu,
-          //   },
-          // })
         });
         return client.replyMessage(event.replyToken, {
           type: "flex",
