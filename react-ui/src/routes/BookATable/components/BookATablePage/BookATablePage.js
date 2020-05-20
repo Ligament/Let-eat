@@ -57,6 +57,7 @@ function useTables() {
   const [editDialogOpen, changeEditDialogState] = useState(false);
   const [confirmDialogOpen, changeConfirmDialogState] = useState(false);
   const [cancelDialogOpen, changeCancelDialogState] = useState(false);
+  const [deleteDialogOpen, changeDeleteDialogState] = useState(false);
 
   const toggleNewDialog = () => {
     changeNewDialogState(!newDialogOpen);
@@ -74,11 +75,15 @@ function useTables() {
     changeCancelDialogState(!cancelDialogOpen);
   };
 
+  const toggleDeleteDialog = () => {
+    changeDeleteDialogState(!deleteDialogOpen);
+  };
+
   function addTable(newInstance) {
     if (!auth.uid) {
       return showError("You must be logged in to add a table");
     }
-    if (user[0].value.role === "customer") {
+    if (user[0].value.role === 'Customer') {
       return showError("You cannot add a table");
     }
     return firebase
@@ -103,7 +108,7 @@ function useTables() {
     if (!auth.uid) {
       return showError("You must be logged in to add a table");
     }
-    if (user[0].value.role === "customer") {
+    if (user[0].value.role === 'Customer') {
       return showError("You cannot add a table");
     }
     return firebase
@@ -150,7 +155,7 @@ function useTables() {
     if (!auth.uid) {
       return showError("You must be logged in to book a table");
     }
-    if (user[0].value.role !== "customer") {
+    if (user[0].value.role !== 'Customer') {
       return firebase
         .update(`table_set/${table.id}`, { isEmpty: true, reservationBy: null })
         .then(() => {
@@ -183,13 +188,13 @@ function useTables() {
     if (!auth.uid) {
       return showError("You must be logged in to delete a table");
     }
-    if (user[0].value.role === "customer") {
+    if (user[0].value.role === 'Customer') {
       return showError("You cannot delete this table reservation");
     }
     return firebase
       .remove(`table_set/${table.id}`)
       .then(() => {
-        toggleEditDialog();
+        toggleDeleteDialog();
         showSuccess("Delete successfully");
       })
       .catch((err) => {
@@ -218,6 +223,8 @@ function useTables() {
     cancelDialogOpen,
     toggleCancelDialog,
     deleteTable,
+    deleteDialogOpen,
+    toggleDeleteDialog
   };
 }
 
@@ -242,6 +249,8 @@ function BookATablePage() {
     cancelDialogOpen,
     toggleCancelDialog,
     deleteTable,
+    deleteDialogOpen,
+    toggleDeleteDialog
   } = useTables();
 
   var isNotCustomer = false;
@@ -312,7 +321,7 @@ function BookATablePage() {
 
   const handleDialog = (table) => {
     if (isNotCustomer) {
-      toggleEditDialog();
+      toggleDeleteDialog();
     } else if (table.isEmpty) {
       setSelectTable(table);
       toggleConfirmDialog();
@@ -331,10 +340,10 @@ function BookATablePage() {
       />
       <DeleteTableReservationDialog
         // onSubmit={editTable}
-        open={editDialogOpen}
+        open={deleteDialogOpen}
         handleOk={() => deleteTable(selectTable)}
-        onRequestClose={toggleEditDialog}
-        tableData={selectTable}
+        onRequestClose={toggleDeleteDialog}
+        tableData={selectTable.tableNumber}
       />
       <ConfirmTableReservationDialog
         open={confirmDialogOpen}
