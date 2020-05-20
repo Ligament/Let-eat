@@ -1123,25 +1123,25 @@ if (!isDev && cluster.isMaster) {
   app.post("/api/foodmenu", function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
 
-    var bookATable = db.ref("menus");
+    var foodMenu = db.ref("/");
     var contentFoodMenu = [];
-
-    bookATable.once("value", (data) => {
-      d = data.val();
-      for (var exKey in d) {
+    foodMenu.child("menus").once("value", food => {
+      food.forEach(data => {
+        const key = data.key;
+        const food = data.val();
         contentFoodMenu.push({
           type: "bubble",
           direction: "ltr",
           hero: {
             type: "image",
-            url: d[exKey].pictureUrl,
+            url: food.pictureUrl,
             size: "full",
             aspectRatio: "20:13",
             aspectMode: "cover",
             action: {
               type: "uri",
               label: "Action",
-              uri: d[exKey].pictureUrl,
+              uri: food.pictureUrl,
             },
           },
           body: {
@@ -1151,18 +1151,18 @@ if (!isDev && cluster.isMaster) {
             action: {
               type: "uri",
               label: "Action",
-              uri: `https://teyisabot.herokuapp.com/?food=${exKey}`,
+              uri: `https://teyisabot.herokuapp.com/?food=${key}`,
             },
             contents: [
               {
                 type: "text",
-                text: d[exKey].foodName,
+                text: food.foodName,
                 size: "xl",
                 weight: "bold",
               },
               {
                 type: "text",
-                text: d[exKey].detail,
+                text: food.detail,
                 size: "xxs",
                 color: "#AAAAAA",
                 wrap: true,
@@ -1176,7 +1176,7 @@ if (!isDev && cluster.isMaster) {
                   },
                   {
                     type: "text",
-                    text: d[exKey].price,
+                    text: food.price,
                     align: "end",
                   },
                 ],
@@ -1192,7 +1192,7 @@ if (!isDev && cluster.isMaster) {
                 action: {
                   type: "uri",
                   label: "สั่งเมนูนี้",
-                  uri: `https://teyisabot.herokuapp.com/?addmenu=${exKey}`,
+                  uri: `https://teyisabot.herokuapp.com/?addmenu=${key}`,
                 },
                 color: "#FE6B8B",
                 style: "primary",
@@ -1200,7 +1200,7 @@ if (!isDev && cluster.isMaster) {
             ],
           },
         });
-      }
+      })
       console.log("foodMenu", {
         type: "flex",
         altText: "Flex Message",
@@ -1209,16 +1209,31 @@ if (!isDev && cluster.isMaster) {
           contents: contentFoodMenu,
         },
       });
+    })
 
-      return client.pushMessage("Uecea57795bf220fb7cfb1679207bb07b", {
-        type: "flex",
-        altText: "Flex Message",
-        contents: {
-          type: "carousel",
-          contents: contentFoodMenu,
-        },
-      });
-    });
+    // bookATable.once("value", (data) => {
+    //   d = data.val();
+    //   for (var exKey in d) {
+        
+    //   }
+    //   console.log("foodMenu", {
+    //     type: "flex",
+    //     altText: "Flex Message",
+    //     contents: {
+    //       type: "carousel",
+    //       contents: contentFoodMenu,
+    //     },
+    //   });
+
+    //   return client.pushMessage("Uecea57795bf220fb7cfb1679207bb07b", {
+    //     type: "flex",
+    //     altText: "Flex Message",
+    //     contents: {
+    //       type: "carousel",
+    //       contents: contentFoodMenu,
+    //     },
+    //   });
+    // });
 
     return res.status(200).send(req.method);
   });
