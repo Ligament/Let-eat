@@ -219,8 +219,8 @@ function handleEvent(event) {
       } else if (data === "menu") {
         var foodMenu = db.ref("/");
         var contentFoodMenu = [];
-        foodMenu.child("menus").once("value").then(data => {
-          food.forEach((data) => {
+        foodMenu.child("menus").once("value").then(foods => {
+          foods.forEach((data) => {
             const key = data.key;
             const food = data.val();
             contentFoodMenu.push({
