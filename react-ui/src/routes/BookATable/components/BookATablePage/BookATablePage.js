@@ -259,7 +259,7 @@ function BookATablePage() {
   if (!(isLoaded(tableImages) && isLoaded(user) && isLoaded(tableSet))) {
     return <LoadingSpinner />;
   }
-  isNotCustomer = user[0].value.role !== "Customer";
+  isNotCustomer = user[0].value.role !== 'Customer'
 
   const addTableRolesCheck = () => {
     return user[0].value.role !== "Customer";
@@ -311,7 +311,7 @@ function BookATablePage() {
   tableData = Array.from(tableData, (item) => item || emptyTable);
 
   const handleDialog = (table) => {
-    if (addTableRolesCheck()) {
+    if (isNotCustomer) {
       toggleEditDialog();
     } else if (table.isEmpty) {
       setSelectTable(table);
@@ -349,7 +349,7 @@ function BookATablePage() {
         onRequestClose={toggleCancelDialog}
       />
       <div className={classes.tiles}>
-        {addTableRolesCheck && <AddTable onClick={toggleNewDialog} />}
+        {isNotCustomer && <AddTable onClick={toggleNewDialog} />}
         {!isEmpty(tableData) && (
           <DisplayTable tableData={tableData} handleTable={handleDialog} />
         )}
