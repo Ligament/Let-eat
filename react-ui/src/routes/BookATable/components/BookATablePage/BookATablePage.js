@@ -321,6 +321,7 @@ function BookATablePage() {
 
   const handleDialog = (table) => {
     if (isNotCustomer) {
+      setSelectTable(table);
       toggleDeleteDialog();
     } else if (table.isEmpty) {
       setSelectTable(table);
