@@ -43,21 +43,21 @@ function verifyLineToken(body) {
     uri: `https://api.line.me/oauth2/v2.1/verify?access_token=${body.access_token}`,
     json: true,
   }).then((response) => {
-  //   if (response.client_id !== process.env.LINE_CHANNEL_ID) {
-  //     return Promise.reject(new Error("LINE channel ID mismatched"));
-  //   }
-  //   return getFirebaseUser(body);
-  // });
-  if (response.client_id !== process.env.LINE_CHANNEL_ID) {
-    return Promise.reject(new Error("LINE channel ID mismatched"));
-  }
-  return getFirebaseUser(body)
-    .then((userRecord) => {
-      return admin.auth().createCustomToken(userRecord.uid);
-    })
-    .then((token) => {
-      return token;
-    });
+    //   if (response.client_id !== process.env.LINE_CHANNEL_ID) {
+    //     return Promise.reject(new Error("LINE channel ID mismatched"));
+    //   }
+    //   return getFirebaseUser(body);
+    // });
+    if (response.client_id !== process.env.LINE_CHANNEL_ID) {
+      return Promise.reject(new Error("LINE channel ID mismatched"));
+    }
+    return getFirebaseUser(body)
+      .then((userRecord) => {
+        return admin.auth().createCustomToken(userRecord.uid);
+      })
+      .then((token) => {
+        return token;
+      });
   });
 }
 
@@ -72,7 +72,7 @@ function getFirebaseUser(body) {
     })
     .catch((error) => {
       if (error.code === "auth/user-not-found") {
-        const userRole = body.position? body.position:'Customer'
+        const userRole = body.position ? body.position : "Customer";
         const user = admin.auth().createUser({
           uid: firebaseUid,
           displayName: body.name,
@@ -90,12 +90,18 @@ function getFirebaseUser(body) {
           lastName: body.lastName,
           access_token: body.access_token,
           lineDisplayName: body.displayName,
-          statusMessage: body.statusMessage
+          statusMessage: body.statusMessage,
         });
-        if (userRole === 'Customer') {
-          client.linkRichMenuToUser(body.userId, process.env.CUSTOMER_RICH_MENU_ID);
+        if (userRole === "Customer") {
+          client.linkRichMenuToUser(
+            body.userId,
+            process.env.CUSTOMER_RICH_MENU_ID
+          );
         } else {
-          client.linkRichMenuToUser(body.userId, process.env.BUSINESS_RICH_MENU_ID);
+          client.linkRichMenuToUser(
+            body.userId,
+            process.env.BUSINESS_RICH_MENU_ID
+          );
         }
         return user;
       }
@@ -185,7 +191,7 @@ function handleEvent(event) {
           // console.log("join", d.join());
           var table_book = "";
           for (var exKey in d) {
-            table_book += `โต๊ะ ${d[exKey].table_book} \n`
+            table_book += `โต๊ะ ${d[exKey].table_book} \n`;
             // replyText(event.replyToken, `โต๊ะที่ ${exKey[exKey]}`);
             // console.log("key:"+exKey+", value:"+exjson[exKey]);
           }
@@ -196,7 +202,7 @@ function handleEvent(event) {
       } else if (data === "resvAMenu") {
         var d = [];
         var bookATable = db.ref("restaurant");
-        var contentFoodMenu = []
+        var contentFoodMenu = [];
         bookATable.child("book_a_menu").once("value", (data) => {
           d = data.val();
           // d.map((table, ind) => {
@@ -204,94 +210,13 @@ function handleEvent(event) {
           // });
           var menu = "";
           for (var exKey in d) {
-            menu += `เมนู ${d[exKey].pictureUrl} \n`
+            menu += `เมนู ${d[exKey].pictureUrl} \n`;
             // console.log("key:"+exKey+", value:"+exjson[exKey]);
           }
           replyText(event.replyToken, `เมนูที่ถูกสั่งคือ ${menu}`);
-          
         });
         return replyText(event.replyToken, d);
       } else if (data === "menu") {
-        // var bookATable = db.ref("menus");
-        // var contentFoodMenu = {}
-
-        // bookATable.child("book_a_menu").once("value", (data) => {
-        //   d = data.val();
-        //   for (var exKey in d) {
-        //     contentFoodMenu.push({
-        //       type: "bubble",
-        //       direction: "ltr",
-        //       hero: {
-        //         type: "image",
-        //         url: d[exKey].pictureUrl,
-        //         size: "full",
-        //         aspectRatio: "20:13",
-        //         aspectMode: "cover",
-        //         action: {
-        //           type: "uri",
-        //           label: "Action",
-        //           uri: d[exKey].pictureUrl,
-        //         },
-        //       },
-        //       body: {
-        //         type: "box",
-        //         layout: "vertical",
-        //         spacing: "md",
-        //         action: {
-        //           type: "uri",
-        //           label: "Action",
-        //           uri: `https://teyisabot.herokuapp.com/?food=${exKey}`,
-        //         },
-        //         contents: [
-        //           {
-        //             type: "text",
-        //             text: d[exKey].foodName,
-        //             size: "xl",
-        //             weight: "bold",
-        //           },
-        //           {
-        //             type: "text",
-        //             text: d[exKey].detail,
-        //             size: "xxs",
-        //             color: "#AAAAAA",
-        //             wrap: true,
-        //           },
-        //           {
-        //             type: "box",
-        //             layout: "vertical",
-        //             contents: [
-        //               {
-        //                 type: "spacer",
-        //               },
-        //               {
-        //                 type: "text",
-        //                 text: d[exKey].price,
-        //                 align: "end",
-        //               },
-        //             ],
-        //           },
-        //         ],
-        //       },
-        //       footer: {
-        //         type: "box",
-        //         layout: "vertical",
-        //         contents: [
-        //           {
-        //             type: "button",
-        //             action: {
-        //               type: "uri",
-        //               label: "สั่งเมนูนี้",
-        //               uri: `https://teyisabot.herokuapp.com/?addmenu=${exKey}`
-        //             },
-        //             color: "#FE6B8B",
-        //             style: "primary",
-        //           },
-        //         ],
-        //       },
-        //     })
-        //   }
-        //   return client.replyMessage(event.replyToken, contentFoodMenu)
-        // });
         return client.replyMessage(event.replyToken, {
           type: "flex",
           altText: "Flex Message",
@@ -1083,8 +1008,8 @@ if (!isDev && cluster.isMaster) {
   });
 
   app.post("/api/createCustomToken", jsonParser, (req, res) => {
-    console.log('/api/createCustomToken', req.body);
-    
+    console.log("/api/createCustomToken", req.body);
+
     if (req.body.access_token === undefined) {
       const ret = {
         error_message: "AccessToken not found",
@@ -1108,29 +1033,106 @@ if (!isDev && cluster.isMaster) {
       });
   });
 
-  app.post("/api/richMenu", function (req, res) {
+  app.post("/api/foodmenu", function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
 
-    let richMenuId1 = "YOUR-RICH-MENU-ID-1";
-    let richMenuId2 = "YOUR-RICH-MENU-ID-2";
+    var bookATable = db.ref("menus");
+    var contentFoodMenu = [];
 
-    if (req.body.uid !== undefined) {
-      // คุณอาจทำการ auth ด้วย username และ password ที่ผู้ใช้กรอกมา
-      // และคุณอาจเก็บข้อมูล uid ลง db เพื่อผูกกับ existing account เดิมที่มีอยู่ในระบบ
-      link(req.body.uid, richMenuId1);
-    } else {
-      let event = req.body.events[0];
-      if (event.type === "postback") {
-        switch (event.postback.data) {
-          case "richmenu1":
-            link(event.source.userId, richMenuId1);
-            break;
-          case "richmenu2":
-            link(event.source.userId, richMenuId2);
-            break;
+    bookATable.once("value", (data) => {
+      d = data.val();
+      for (var exKey in d) {
+        contentFoodMenu.push({
+          type: "bubble",
+          direction: "ltr",
+          hero: {
+            type: "image",
+            url: d[exKey].pictureUrl,
+            size: "full",
+            aspectRatio: "20:13",
+            aspectMode: "cover",
+            action: {
+              type: "uri",
+              label: "Action",
+              uri: d[exKey].pictureUrl,
+            },
+          },
+          body: {
+            type: "box",
+            layout: "vertical",
+            spacing: "md",
+            action: {
+              type: "uri",
+              label: "Action",
+              uri: `https://teyisabot.herokuapp.com/?food=${exKey}`,
+            },
+            contents: [
+              {
+                type: "text",
+                text: d[exKey].foodName,
+                size: "xl",
+                weight: "bold",
+              },
+              {
+                type: "text",
+                text: d[exKey].detail,
+                size: "xxs",
+                color: "#AAAAAA",
+                wrap: true,
+              },
+              {
+                type: "box",
+                layout: "vertical",
+                contents: [
+                  {
+                    type: "spacer",
+                  },
+                  {
+                    type: "text",
+                    text: d[exKey].price,
+                    align: "end",
+                  },
+                ],
+              },
+            ],
+          },
+          footer: {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "button",
+                action: {
+                  type: "uri",
+                  label: "สั่งเมนูนี้",
+                  uri: `https://teyisabot.herokuapp.com/?addmenu=${exKey}`,
+                },
+                color: "#FE6B8B",
+                style: "primary",
+              },
+            ],
+          },
+        });
+      }
+      console.log("foodMenu", {
+        "type": "flex",
+        "altText": "Flex Message",
+        "contents": {
+          "type": "carousel",
+          "contents": contentFoodMenu
         }
       }
-    }
+      );
+      
+      return client.pushMessage('Uecea57795bf220fb7cfb1679207bb07b', {
+        "type": "flex",
+        "altText": "Flex Message",
+        "contents": {
+          "type": "carousel",
+          "contents": contentFoodMenu
+        }
+      })
+    });
 
     return res.status(200).send(req.method);
   });
