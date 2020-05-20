@@ -1209,6 +1209,14 @@ if (!isDev && cluster.isMaster) {
           contents: contentFoodMenu,
         },
       });
+      res.status(200).send({
+        type: "flex",
+        altText: "Flex Message",
+        contents: {
+          type: "carousel",
+          contents: contentFoodMenu,
+        },
+      })
     })
 
     // bookATable.once("value", (data) => {
