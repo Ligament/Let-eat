@@ -43,11 +43,6 @@ function verifyLineToken(body) {
     uri: `https://api.line.me/oauth2/v2.1/verify?access_token=${body.access_token}`,
     json: true,
   }).then((response) => {
-    //   if (response.client_id !== process.env.LINE_CHANNEL_ID) {
-    //     return Promise.reject(new Error("LINE channel ID mismatched"));
-    //   }
-    //   return getFirebaseUser(body);
-    // });
     if (response.client_id !== process.env.LINE_CHANNEL_ID) {
       return Promise.reject(new Error("LINE channel ID mismatched"));
     }
@@ -180,20 +175,9 @@ function handleEvent(event) {
         var bookATable = db.ref("restaurant");
         bookATable.child("book_a_table").once("value", (data) => {
           d = data.val();
-          // d.map((table, ind) => {
-          //   return `โต๊ะที่ ${table}`;
-          // });
-          // console.log(d);
-          // d.map((id, table) => {
-          //   return `โต๊ะที่ ${table.table_book}`;
-          // });
-          // console.log("not joid", d);
-          // console.log("join", d.join());
           var table_book = "";
           for (var exKey in d) {
             table_book += `โต๊ะ ${d[exKey].table_book} \n`;
-            // replyText(event.replyToken, `โต๊ะที่ ${exKey[exKey]}`);
-            // console.log("key:"+exKey+", value:"+exjson[exKey]);
           }
 
           replyText(event.replyToken, `${table_book}`);
@@ -205,13 +189,9 @@ function handleEvent(event) {
         var contentFoodMenu = [];
         bookATable.child("book_a_menu").once("value", (data) => {
           d = data.val();
-          // d.map((table, ind) => {
-          //   return `โต๊ะที่ ${table}`;
-          // });
           var menu = "";
           for (var exKey in d) {
             menu += `เมนู ${d[exKey].menu} \n`;
-            // console.log("key:"+exKey+", value:"+exjson[exKey]);
           }
           replyText(event.replyToken, `เมนูที่ถูกสั่งคือ ${menu}`);
         });
@@ -283,11 +263,6 @@ function handleEvent(event) {
                 contents: [
                   {
                     type: "button",
-                    // action: {
-                    //   type: "uri",
-                    //   label: "สั่งเมนูนี้",
-                    //   uri: `https://teyisabot.herokuapp.com/?addmenu=${key}`,
-                    // },
                     action: {
                       type: "postback",
                       label: "สั่งเมนูนี้",
@@ -310,14 +285,6 @@ function handleEvent(event) {
             },
           });
           return contentFoodMenu
-          // return client.replyMessage(event.replyToken, {
-          //   type: "flex",
-          //   altText: "Flex Message",
-          //   contents: {
-          //     type: "carousel",
-          //     contents: contentFoodMenu,
-          //   },
-          // });
         }).then((contentFoodMenu) => client.pushMessage(event.source.userId, {
           type: "flex",
           altText: "Flex Message",
@@ -646,16 +613,6 @@ function handleText(message, replyToken, source) {
   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
 
   switch (message.text) {
-    case "ร้านค้า":
-      return client.linkRichMenuToUser(
-        source.userId,
-        process.env.BUSINESS_RICH_MENU_ID
-      );
-    case "ลูกค้า":
-      return client.linkRichMenuToUser(
-        source.userId,
-        process.env.CUSTOMER_RICH_MENU_ID
-      );
     case "profile":
       if (source.userId) {
         return client
@@ -882,7 +839,6 @@ function handleText(message, replyToken, source) {
       }
     default:
       return console.log(`Echo message to ${replyToken}: ${message.text}`);
-    // return replyText(replyToken, message.text);
   }
 }
 
@@ -908,10 +864,6 @@ function handleBookATable(data, replyToken) {
       text: `คุณต้องการที่จะจองโต๊ะที่ ${data.split("bookATable")[1]}`,
     },
   });
-  // return replyText(
-  //   replyToken,
-  //   `คุณได้จองโต๊ะที่ ${data.split("bookATable")}`
-  // );
 }
 
 function handleBookATableConfirm(data, replyToken) {
@@ -1105,11 +1057,6 @@ if (!isDev && cluster.isMaster) {
   // create application/x-www-form-urlencoded parser
   var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-  // app.use(bodyParser.urlencoded({ extended: false }));
-
-  // // parse application/json
-  // app.use(bodyParser.json());
-
   // Answer API requests.
   app.get("/api", function (req, res) {
     res.set("Content-Type", "application/json");
@@ -1125,7 +1072,6 @@ if (!isDev && cluster.isMaster) {
       };
       return res.status(400).send(ret);
     }
-    // console.log("rq", req.body);
 
     return verifyLineToken(req.body)
       .then((customAuthToken) => {
@@ -1240,32 +1186,6 @@ if (!isDev && cluster.isMaster) {
         },
       });
     });
-
-    // bookATable.once("value", (data) => {
-    //   d = data.val();
-    //   for (var exKey in d) {
-
-    //   }
-    //   console.log("foodMenu", {
-    //     type: "flex",
-    //     altText: "Flex Message",
-    //     contents: {
-    //       type: "carousel",
-    //       contents: contentFoodMenu,
-    //     },
-    //   });
-
-    //   return client.pushMessage("Uecea57795bf220fb7cfb1679207bb07b", {
-    //     type: "flex",
-    //     altText: "Flex Message",
-    //     contents: {
-    //       type: "carousel",
-    //       contents: contentFoodMenu,
-    //     },
-    //   });
-    // });
-
-    // return res.status(200).send(req.method);
   });
 
   app.get("/callback", (req, res) =>

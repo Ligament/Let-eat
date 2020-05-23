@@ -14,7 +14,6 @@ function CoreLayout({ children }) {
 
   return (
     <div className={classes.container}>
-      {/* <Navbar /> */}
       <CssBaseline />
       <div className={classes.children}>{children}</div>
       <Notifications />
