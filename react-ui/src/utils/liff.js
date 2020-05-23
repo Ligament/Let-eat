@@ -84,19 +84,21 @@ class liff {
     const profile = await this.getProfile()
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    const response = await fetch('/api/createCustomToken', {
+    const response = await fetch('/api/loginFirebaseWithLine', {
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       headers: myHeaders,
       body: JSON.stringify(profile) // body data type must match "Content-Type" header
     });
     return response.json().then(data => {
+      console.log(data);
+      
       return { ...data, ...profile }
     })
   }
 
   login(redirectUri = null) {
-    if (!this.isInClient() && !this.isLoggedIn()) {
-        liffSDK.login({ redirectUri });
+    if (!this.isLoggedIn()) {
+      liffSDK.login({ redirectUri })
     }
   }
 

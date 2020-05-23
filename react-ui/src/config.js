@@ -17,15 +17,8 @@ export const firebase = JSON.parse(new Buffer(process.env.REACT_APP_FIREBASE_CON
 // For more details, visit http://react-redux-firebase.com/docs/api/enhancer.html
 export const reduxFirebase = {
   userProfile: 'users',
-  profileParamsToPopulate: [
-    { child: 'role', root: 'roles' }, // populates user's role with matching role object from roles
-  ],
-  profileFactory: (userData, profileData, firebase) => { // how profiles are stored in database
-    const { user } = userData
-    return {
-      email: user.email
-    }
-  },
+  presence: 'presence',
+  sessions: 'sessions',
   enableLogging: false, // enable/disable Firebase Database Logging
   fileMetadataFactory: (uploadRes, firebase, metadata, downloadURL) => {
     // upload response from Firebase's storage upload

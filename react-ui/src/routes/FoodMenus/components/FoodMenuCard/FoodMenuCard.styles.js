@@ -1,6 +1,6 @@
 export default (theme) => ({
   root: {
-    // display: 'flex',
+    display: 'flex',
     // alignItems: 'start',
     height: 86,
     width: 345,
@@ -9,25 +9,32 @@ export default (theme) => ({
   },
   action: {
     display: 'flex',
-    alignItems: 'start',
-    width: 345,
-    height: 86,
+    // alignItems: 'start',
+    // width: 345,
+    // height: 86,
     // margin: '6px 0 6px 0',
   },
   // details: {
   //   display: 'flex',
   //   flexDirection: 'column',
   // },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   content: {
-    // flex: '1 0 auto',
-    margin:8
+    minWidth: 0,
+    // margin:8,
+    padding: 8,
+    flex: 1
   },
   price: {
     flex: 'auto 0 1',
-    padding: 18
+    padding: 12
   },
   cover: {
-    width: 86,
+    width: 100,
+    height: '100%'
   },
   // controls: {
   //   display: 'flex',

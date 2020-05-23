@@ -154,7 +154,7 @@ function MenusPage({ match }) {
               {/* <AddFoodMenu onClick={toggleDialog} /> */}
               {/* <div className={classes.menu}> */}
               {!isEmpty(menus) &&
-                menus.map((menu, ind) => {
+                menus.reverse().map((menu, ind) => {
                   return (
                     <FoodMenuCard
                       key={`FoodMenu-${menu.key}-${ind}`}
@@ -162,7 +162,7 @@ function MenusPage({ match }) {
                       detail={menu.value.detail}
                       price={menu.value.price}
                       pictureUrl={menu.value.pictureUrl}
-                      projectId={menu.key}
+                      foodId={menu.key}
                     />
                   );
                 })}

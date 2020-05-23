@@ -17,56 +17,39 @@ import {
 
 const useStyles = makeStyles(styles);
 
-function FoodMenuCard({
-  name,
-  detail,
-  pictureUrl,
-  price,
-  projectId,
-  showDelete,
-}) {
+function FoodMenuCard({ name, detail, pictureUrl, price, foodId }) {
   const classes = useStyles();
   const history = useHistory();
-  const firebase = useFirebase();
-  const { showError, showSuccess } = useNotifications();
 
   function goToMenu() {
-    return history.push(`${FOOD_MENU_PATH}/${projectId}`);
-  }
-
-  function deleteMenu() {
-    return firebase
-      .remove(`menus/${projectId}`)
-      .then(() => showSuccess("Project deleted successfully"))
-      .catch((err) => {
-        console.error("Error:", err); // eslint-disable-line no-console
-        showError(err.message || "Could not delete project");
-        return Promise.reject(err);
-      });
+    return history.push(`${FOOD_MENU_PATH}/${foodId}`);
   }
 
   return (
     <Card className={classes.root}>
-      <CardActionArea className={classes.action}>
+      <CardActionArea className={classes.action} onClick={goToMenu}>
         <CardMedia
-          component="img"
+          // component="img"
           className={classes.cover}
           image={pictureUrl}
           title={name}
         />
-        {/* <CardContent className={classes.content}> */}
-          <Grid xs zeroMinWidth className={classes.content}>
-            <Typography component="h5" variant="h5" noWrap>{name}</Typography>
+        {/* <div className={classes.details}> */}
+          <CardContent className={classes.content}>
+            {/* <Grid zeroMinWidth className={classes.content}> */}
+            <Typography component="h5" variant="h5" noWrap>
+              {name}
+            </Typography>
             <Typography
-            variant="subtitle1"
-            color="textSecondary"
-            component="p"
-            noWrap
-          >
-            {detail}
-          </Typography>
-          </Grid>
-          {/* <Typography component="h5" variant="h5">
+              variant="subtitle1"
+              color="textSecondary"
+              component="p"
+              noWrap
+            >
+              {detail}
+            </Typography>
+            {/* </Grid> */}
+            {/* <Typography component="h5" variant="h5">
             {name}
           </Typography>
           <Typography
@@ -77,12 +60,14 @@ function FoodMenuCard({
           >
             {detail}
           </Typography> */}
-        {/* </CardContent> */}
-        <CardContent className={classes.price}>
-          <Typography variant="subtitle1" color="textSecondary">
-            {price}
-          </Typography>
-        </CardContent>
+          </CardContent>
+          {/* </div> */}
+          <CardContent className={classes.price}>
+            <Typography variant="subtitle1" color="textSecondary">
+              {price}
+            </Typography>
+          </CardContent>
+        
       </CardActionArea>
     </Card>
     // <Paper className={classes.root}>

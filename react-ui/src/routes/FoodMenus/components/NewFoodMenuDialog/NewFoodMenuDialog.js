@@ -15,7 +15,8 @@ import UploadField from "components/FormUploadField";
 import Uploader from "components/FormUploadField/Uploader";
 import { Grid } from "@material-ui/core";
 import PrefixTextField from "components/FormPrefixTextField";
-import NumberFormat from 'react-number-format';
+import NumberFormat from "react-number-format";
+import ImageUploadField from "components/FormImageUploadField";
 
 function NumberFormatCustom(props) {
   const { inputRef, onChange, ...other } = props;
@@ -63,12 +64,13 @@ function NewFoodMenuDialog({ handleSubmit, open, onRequestClose }) {
             spacing={2}
           >
             <Grid item>
+              {/* <Field name="picture" component="input" type="file" value={null} /> */}
               <Field
                 name="pictureUrl"
-                component={TextField}
+                component={ImageUploadField}
                 label="Food Picture URL"
                 validate={[required]}
-                variant="outlined"
+                style={{ width: 202 }}
               />
             </Grid>
             <Grid item>
@@ -87,6 +89,8 @@ function NewFoodMenuDialog({ handleSubmit, open, onRequestClose }) {
                 label="Food Detail"
                 validate={[required]}
                 variant="outlined"
+                multiline
+                style={{ width: 202 }}
               />
             </Grid>
             <Grid item>

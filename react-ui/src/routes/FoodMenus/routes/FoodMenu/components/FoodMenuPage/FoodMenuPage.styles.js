@@ -6,5 +6,9 @@ export default theme => ({
     ...theme.flexRowCenter,
     alignItems: 'center',
     paddingTop: theme.spacing(8)
-  }
+  },
+  media: {
+    width: '100%',
+    height: 'auto'
+  },
 })

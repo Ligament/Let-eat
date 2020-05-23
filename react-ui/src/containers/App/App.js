@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { BrowserRouter as Router } from "react-router-dom";
-import { useMediaQuery, createMuiTheme, ThemeProvider, CssBaseline, responsiveFontSizes } from "@material-ui/core";
+import { useMediaQuery, createMuiTheme, ThemeProvider, responsiveFontSizes } from "@material-ui/core";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import "firebase/firestore"; // make sure you add this for firestore
+import "firebase/storage"; // make sure you add this for storage
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 // import { createFirestoreInstance } from 'redux-firestore'
 import { Provider } from "react-redux";
@@ -95,7 +95,6 @@ function App({ routes, store }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline/>
       <Provider store={store}>
         <ReactReduxFirebaseProvider
           firebase={firebase}
